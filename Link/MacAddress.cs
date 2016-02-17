@@ -66,7 +66,7 @@ namespace Network.Sim.Link {
 			var b = new StringBuilder();
 			for (var i = 0; i < address.Length; i++) {
 				b.Append(address[i].ToString("X2"));
-				if (i < (address.Length - 1))
+				if (i < address.Length - 1)
 					b.Append(":");
 			}
 			return b.ToString();
@@ -99,7 +99,7 @@ namespace Network.Sim.Link {
 		public override int GetHashCode() {
 			var hash = 13;
 			foreach (var b in address)
-				hash = (hash * 7) + b.GetHashCode();
+				hash = hash * 7 + b.GetHashCode();
 			return hash;
 		}
 
@@ -111,7 +111,7 @@ namespace Network.Sim.Link {
 		/// <returns>True if the specified objects are semantically equal;
 		/// Otherwise false.</returns>
 		public static bool operator ==(MacAddress a, MacAddress b) {
-			if (System.Object.ReferenceEquals(a, b))
+			if (ReferenceEquals(a, b))
 				return true;
 			if (((object) a == null) || ((object) b == null))
 				return false;

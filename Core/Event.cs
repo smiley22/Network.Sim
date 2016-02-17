@@ -14,6 +14,9 @@ namespace Network.Sim.Core {
 			private set;
 		}
 
+        /// <summary>
+        /// A reference to the object that raised the event.
+        /// </summary>
 		public object Sender {
 			get;
 			private set;

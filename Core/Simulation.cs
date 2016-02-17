@@ -24,11 +24,6 @@ namespace Network.Sim.Core {
 			new BlockingPriorityQueue<Event>();
 
 		/// <summary>
-		/// The console-command interpreter of the simulation.
-		/// </summary>
-		static readonly Interpreter interpreter = new Interpreter();
-
-		/// <summary>
 		/// Adds the specified event to the simulation.
 		/// </summary>
 		/// <param name="ev">The event instance to add to the simulation.</param>

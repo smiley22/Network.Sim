@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Network.Sim")]
-[assembly: AssemblyDescription("Simulates the operation of a network stack")]
+[assembly: AssemblyDescription("A Software simulating an IEEE 802.3-based (Ethernet) Network Stack")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Network.Sim")]

@@ -35,7 +35,7 @@ namespace Network.Sim {
 		/// <param name="data">The string to check for nullity and
 		/// emptiness.</param>
 		public static void ThrowIfNullOrEmpty(this string data) {
-			if (String.IsNullOrEmpty(data))
+			if (string.IsNullOrEmpty(data))
 				throw new ArgumentException();
 		}
 
@@ -48,7 +48,7 @@ namespace Network.Sim {
 		/// <param name="name">The name to use when throwing an
 		/// exception, if necessary</param>
 		public static void ThrowIfNullOrEmpty(this string data, string name) {
-			if (String.IsNullOrEmpty(data))
+			if (string.IsNullOrEmpty(data))
 				throw new ArgumentException("The " + name +
 					" parameter must not be null or empty");
 		}
@@ -63,7 +63,7 @@ namespace Network.Sim {
 		public static byte[] ReadAllBytes(this BinaryReader reader) {
 			const int bufferSize = 4096;
 			using (var ms = new MemoryStream()) {
-				byte[] buffer = new byte[bufferSize];
+				var buffer = new byte[bufferSize];
 				int count;
 				while ((count = reader.Read(buffer, 0, buffer.Length)) != 0)
 					ms.Write(buffer, 0, count);
@@ -77,7 +77,7 @@ namespace Network.Sim {
 		/// <param name="event">Extension method for EventHandler.</param>
 		/// <param name="sender">The sender of the event.</param>
 		/// <param name="e">The event arguments.</param>
-		static public void RaiseEvent(this EventHandler @event, object sender, EventArgs e) {
+		public static void RaiseEvent(this EventHandler @event, object sender, EventArgs e) {
 			if (@event != null)
 				@event(sender, e);
 		}
@@ -88,7 +88,7 @@ namespace Network.Sim {
 		/// <param name="event">Extension method for EventHandler.</param>
 		/// <param name="sender">The sender of the event.</param>
 		/// <param name="e">The event arguments.</param>
-		static public void RaiseEvent<T>(this EventHandler<T> @event, object sender, T e)
+		public static void RaiseEvent<T>(this EventHandler<T> @event, object sender, T e)
 				where T : EventArgs {
 			if (@event != null)
 				@event(sender, e);
@@ -105,8 +105,8 @@ namespace Network.Sim {
 		/// <returns>A new array instance containing the requested number of
 		/// elements.</returns>
 		public static T[] Slice<T>(this T[] data, int index, int? length = null) {
-			int len = length.HasValue ? length.Value : (data.Length - index);
-			T[] result = new T[len];
+			var len = length ?? data.Length - index;
+			var result = new T[len];
 			if (len > 0)
 				Array.Copy(data, index, result, 0, len);
 			return result;

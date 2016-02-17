@@ -25,7 +25,7 @@ namespace Network.Sim.Miscellaneous {
 		/// </summary>
 		/// <param name="maxSize">The maximum number of elements the queue can
 		/// accomodate.</param>
-		public BlockingPriorityQueue(int maxSize = Int32.MaxValue) {
+		public BlockingPriorityQueue(int maxSize = int.MaxValue) {
 			this.maxSize = maxSize;
 		}
 
@@ -41,13 +41,13 @@ namespace Network.Sim.Miscellaneous {
 				while (list.Count >= maxSize)
 					Monitor.Wait(list);
 				list.Add(item);
-				int ci = list.Count - 1;
+				var ci = list.Count - 1;
 				// Bubble up the heap.
 				while (ci > 0) {
-					int pi = (ci - 1) / 2;
+					var pi = (ci - 1) / 2;
 					if (list[ci].CompareTo(list[pi]) >= 0)
 						break;
-					T tmp = list[ci];
+					var tmp = list[ci];
 					list[ci] = list[pi];
 					list[pi] = tmp;
 					ci = pi;
@@ -68,23 +68,23 @@ namespace Network.Sim.Miscellaneous {
 			lock (list) {
 				while (list.Count == 0)
 					Monitor.Wait(list);
-				int li = list.Count - 1;
-				T item = list[0];
+				var li = list.Count - 1;
+				var item = list[0];
 				// Put the last item at the front and bubble it down.
 				list[0] = list[li];
 				list.RemoveAt(li);
 				li--;
-				int pi = 0;
+				var pi = 0;
 				while (true) {
-					int ci = pi * 2 + 1;
+					var ci = pi * 2 + 1;
 					if (ci > li)
 						break;
-					int rc = ci + 1;
+					var rc = ci + 1;
 					if (rc <= li && list[rc].CompareTo(list[ci]) < 0)
 						ci = rc;
 					if (list[pi].CompareTo(list[ci]) <= 0)
 						break;
-					T tmp = list[pi];
+					var tmp = list[pi];
 					list[pi] = list[ci];
 					list[ci] = tmp;
 					pi = ci;
@@ -113,7 +113,7 @@ namespace Network.Sim.Miscellaneous {
 		/// item is not contained in the list.</exception>
 		public void Remove(T item) {
 			lock (list) {
-				int index = Find(item);
+				var index = Find(item);
 				RemoveAt(index);
 				// Wake up any blocked enqueue.
 				if (list.Count == maxSize - 1)
@@ -139,11 +139,11 @@ namespace Network.Sim.Miscellaneous {
 		public int Remove(removeItem removeHandler) {
 			lock (list) {
 				ISet<T> removeSet = new HashSet<T>();
-				foreach (T item in list) {
+				foreach (var item in list) {
 					if (removeHandler.Invoke(item))
 						removeSet.Add(item);
 				}
-				foreach (T item in removeSet)
+				foreach (var item in removeSet)
 					Remove(item);
 				return removeSet.Count;
 			}
@@ -173,8 +173,8 @@ namespace Network.Sim.Miscellaneous {
 		/// <exception cref="InvalidOperationException">Thrown if the specified
 		/// item is not contained in the list.</exception>
 		int Find(T item) {
-			for (int i = 0; i < list.Count; i++) {
-				if (Object.ReferenceEquals(list[i], item))
+			for (var i = 0; i < list.Count; i++) {
+				if (ReferenceEquals(list[i], item))
 					return i;
 			}
 			throw new InvalidOperationException("The item is not contained " +
@@ -187,17 +187,17 @@ namespace Network.Sim.Miscellaneous {
 		/// <param name="index">The index at which to remove an item.</param>
 		void RemoveAt(int index) {
 			// Move last item into the position of the to-be-removed item.
-			int li = list.Count - 1;
+			var li = list.Count - 1;
 			list[index] = list[li];
 			list.RemoveAt(li);
 			li--;
 			if (list.Count == 0 || index == list.Count)
 				return;
 			// If the new item is less than its parent, bubble up.
-			int ci = index;
-			int pi = (ci - 1) / 2;
+			var ci = index;
+			var pi = (ci - 1) / 2;
 			while (list[pi].CompareTo(list[ci]) > 0) {
-				T tmp = list[ci];
+				var tmp = list[ci];
 				list[ci] = list[pi];
 				list[pi] = tmp;
 				ci = pi;
@@ -206,12 +206,12 @@ namespace Network.Sim.Miscellaneous {
 			// If we haven't bubbled up, we might have to bubble down.
 			if (ci == index) {
 				while (ci <= li) {
-					int rc = ci + 1;
+					var rc = ci + 1;
 					if (rc <= li && list[rc].CompareTo(list[ci]) < 0)
 						ci = rc;
 					if (list[pi].CompareTo(list[ci]) <= 0)
 						break;
-					T tmp = list[pi];
+					var tmp = list[pi];
 					list[pi] = list[ci];
 					list[ci] = tmp;
 					pi = ci;

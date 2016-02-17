@@ -160,7 +160,7 @@ namespace Network.Sim.Core {
 				data = DistortSignal(data);
 			// Calculate transmission time = Size / Bitrate.
 			var transTimeNs = (ulong) (1000000000 *
-				((data.Length * 8) / (double) Bitrate));
+				(data.Length * 8 / (double) Bitrate));
 			// Calculate events for each device on the cable.
 			foreach (var pair in connectors) {
 				var distance = Math.Abs(position - pair.Value);
@@ -248,16 +248,16 @@ namespace Network.Sim.Core {
 			double expectedBurstLength = 0;
 			for (var i = MinBurstErrorLength; i <= MaxBurstErrorLength; i++)
 				expectedBurstLength += i;
-			expectedBurstLength = (expectedBurstLength / (MaxBurstErrorLength - MinBurstErrorLength + 1));
+			expectedBurstLength = expectedBurstLength / (MaxBurstErrorLength - MinBurstErrorLength + 1);
 			var p = (expectedBurstLength -
-				(BitErrorRate * expectedBurstLength)) / BitErrorRate;
-			for (var i = 0; i < (distorted.Length * 8); i++) {
-				if (random.NextDouble() < (1 / p)) {
+				BitErrorRate * expectedBurstLength) / BitErrorRate;
+			for (var i = 0; i < distorted.Length * 8; i++) {
+				if (random.NextDouble() < 1 / p) {
 					var n = random.Next(MinBurstErrorLength, MaxBurstErrorLength + 1);
 					// Distort the next n bits.
-					for (var c = i; c < (i + n) && c < (distorted.Length * 8); c++) {
+					for (var c = i; c < i + n && c < distorted.Length * 8; c++) {
 						int offset = c / 8, bit = c % 8;
-						distorted[offset] &= (byte) (~(1 << bit));
+						distorted[offset] &= (byte) ~(1 << bit);
 						distorted[offset] |= (byte) (random.Next(2) << bit);
 					}
 					i += n;

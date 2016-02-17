@@ -8,7 +8,7 @@ namespace Network.Sim.Core {
 	/// <summary>
 	/// Implements the console interpreter of the simulation.
 	/// </summary>
-	public class Interpreter {
+	public static class Interpreter {
 		/// <summary>
 		/// The dictionary of commands supported by the interpreter.
 		/// </summary>
@@ -237,11 +237,11 @@ namespace Network.Sim.Core {
 				Print("Showing output queue of interface '" + tuple.Item2 + "' of " +
 					"host '" + tuple.Item1 + "':", ConsoleColor.Green);
 				var queue = host.Network.OutputQueueOf(ifc);
-				var percent = (int) ((queue.Count / (double) queue.MaxCapacity) * 100);
+				var percent = (int) (queue.Count / (double) queue.MaxCapacity * 100);
 				Print(queue.Count + " IP packets enqueued.", ConsoleColor.Yellow);
 				var b = new StringBuilder();
 				var numSpaces = 40;
-				var numBars = (int)((numSpaces / 100.0) * percent);
+				var numBars = (int)(numSpaces / 100.0 * percent);
 				b.Append("[");
 				for (var i = 0; i < numSpaces; i++)
 					b.Append(i < numBars ? "|" : " ");

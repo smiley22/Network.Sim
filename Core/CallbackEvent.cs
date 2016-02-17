@@ -2,7 +2,7 @@
 
 namespace Network.Sim.Core {
 	/// <summary>
-	/// An event for scheduling the execution of arbitrary callback methods.
+	/// A simulation event for scheduling the execution of an arbitrary callback method.
 	/// </summary>
 	public class CallbackEvent : Event {
 		/// <summary>

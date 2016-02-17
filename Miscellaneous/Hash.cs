@@ -4,6 +4,9 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace Network.Sim.Miscellaneous {
+	/// <summary>
+	/// Provides various hashing utility methods.
+	/// </summary>
 	public static class Hash {
 		/// <summary>
 		/// Calculates the SHA-256 hash value for the specified string.
@@ -15,7 +18,7 @@ namespace Network.Sim.Miscellaneous {
 		public static string Sha256(string s) {
 			if (s == null)
 				throw new ArgumentException("input string must not be null");
-			byte[] bytes = Encoding.UTF8.GetBytes(s);
+			var bytes = Encoding.UTF8.GetBytes(s);
 			return Sha256(bytes);
 		}
 
@@ -28,9 +31,9 @@ namespace Network.Sim.Miscellaneous {
 		/// <exception cref="ArgumentException">Thrown if the bytes parameter
 		/// is null.</exception>
 		public static string Sha256(byte[] bytes) {
-			byte[] hash = (new SHA256Managed()).ComputeHash(bytes);
-			StringBuilder builder = new StringBuilder();
-			foreach (byte h in hash)
+			var hash = new SHA256Managed().ComputeHash(bytes);
+			var builder = new StringBuilder();
+			foreach (var h in hash)
 				builder.Append(h.ToString("x2"));
 			return builder.ToString();
 		}
@@ -44,9 +47,9 @@ namespace Network.Sim.Miscellaneous {
 		/// <exception cref="ArgumentException">Thrown if the stream parameter
 		/// is null.</exception>
 		public static string Sha256(Stream stream) {
-			byte[] hash = (new SHA256Managed()).ComputeHash(stream);
-			StringBuilder builder = new StringBuilder();
-			foreach (byte h in hash)
+			var hash = new SHA256Managed().ComputeHash(stream);
+			var builder = new StringBuilder();
+			foreach (var h in hash)
 				builder.Append(h.ToString("x2"));
 			return builder.ToString();
 		}

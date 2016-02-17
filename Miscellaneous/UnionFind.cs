@@ -8,7 +8,7 @@ namespace Network.Sim.Miscellaneous {
 		/// <summary>
 		/// The array of identifiers.
 		/// </summary>
-		int[] id;
+		readonly int[] id;
 
 		/// <summary>
 		/// The number of connected components.
@@ -27,7 +27,7 @@ namespace Network.Sim.Miscellaneous {
 		public UnionFind(int size) {
 			id = new int[size];
 			Count = size;
-			for (int i = 0; i < size; i++)
+			for (var i = 0; i < size; i++)
 				id[i] = i;
 		}
 
@@ -51,8 +51,8 @@ namespace Network.Sim.Miscellaneous {
 		public void Union(int p, int q) {
 			if (Connected(p, q))
 				return;
-			int pid = id[p];
-			for (int i = 0; i < id.Length; i++) {
+			var pid = id[p];
+			for (var i = 0; i < id.Length; i++) {
 				if (id[i] == pid)
 					id[i] = id[q];
 			}

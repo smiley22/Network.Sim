@@ -31,15 +31,14 @@ namespace Network.Sim.Miscellaneous {
 		/// <summary>
 		/// The underlying datatype for storing the elements.
 		/// </summary>
-		System.Collections.Generic.Queue<T> queue = new
-			System.Collections.Generic.Queue<T>();
+		readonly Queue<T> queue = new Queue<T>();
 
 		/// <summary>
 		/// Initializes a new instance of the CappedQueue class.
 		/// </summary>
 		/// <param name="maxCapacity">The maximum number of elements the
 		/// queue can store.</param>
-		public CappedQueue(int maxCapacity = Int32.MaxValue) {
+		public CappedQueue(int maxCapacity = int.MaxValue) {
 			MaxCapacity = maxCapacity;
 		}
 
