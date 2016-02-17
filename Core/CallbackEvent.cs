@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+
 namespace Network.Sim.Core {
 	/// <summary>
 	/// An event for scheduling the execution of arbitrary callback methods.
@@ -40,6 +40,5 @@ namespace Network.Sim.Core {
 		public override string ToString() {
 			return "Callback Event";
 		}
-
 	}
 }

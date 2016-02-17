@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Network.Sim.Lan {
+﻿namespace Network.Sim.Lan {
 	/// <summary>
 	/// The different kinds of interrupts that can be caused by a Network
 	/// Interface Card.

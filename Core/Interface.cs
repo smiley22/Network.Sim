@@ -59,7 +59,14 @@ namespace Network.Sim.Core {
 				return Hostname + "::" + Name;
 			}
 		}
-		public string Hostname;
+
+	    /// <summary>
+	    /// The hostname set on the interface.
+	    /// </summary>
+	    public string Hostname {
+	        get;
+            set;
+	    }
 
 		/// <summary>
 		/// The maximum transmission unit (MTU) of the data-link layer
@@ -104,7 +111,7 @@ namespace Network.Sim.Core {
 
 		public Interface(Nic nic, string name, string cidrIpAddress,
 			string gateway = null) {
-			Tuple<IpAddress, IpAddress> t = IpAddress.ParseCIDRNotation(cidrIpAddress);
+			var t = IpAddress.ParseCIDRNotation(cidrIpAddress);
 			Init(nic, name, t.Item1, t.Item2, gateway != null ?
 				new IpAddress(gateway) : null);
 		}

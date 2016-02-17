@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using Network.Sim.Miscellaneous;
-using System.Linq;
 using Network.Sim.Lan.Ethernet;
-using Network.Sim.Network.Ip.Arp;
-using Network.Sim.Network.Ip.Routing;
 
 namespace Network.Sim.Core {
 	/// <summary>
@@ -16,7 +12,7 @@ namespace Network.Sim.Core {
 		/// <summary>
 		/// The dictionary of commands supported by the interpreter.
 		/// </summary>
-		static Dictionary<string, Action<string[]>> commands =
+		static readonly Dictionary<string, Action<string[]>> commands =
 			new Dictionary<string, Action<string[]>>(
 				StringComparer.InvariantCultureIgnoreCase) {
 					{ "Show", Show },
@@ -31,11 +27,11 @@ namespace Network.Sim.Core {
 		/// Reads a new line from the console and interprets it.
 		/// </summary>
 		/// <returns>true if a command was entered; Otherwise false.</returns>
-		public bool ReadCommand() {
+		public static bool ReadCommand() {
 			Console.Write("$ ");
-			string[] token = Console.ReadLine().Split(' ');
-			string predicate = token[0];
-			if (predicate == String.Empty) {
+			var token = Console.ReadLine().Split(' ');
+			var predicate = token[0];
+			if (predicate == string.Empty) {
 				ClearLastConsoleLine();
 				return false;
 			}
@@ -76,7 +72,7 @@ namespace Network.Sim.Core {
 				throw new ArgumentException("Missing object (syntax: 'Show Object [params]').");
 			} catch (KeyNotFoundException) {
 				throw new ArgumentException("Unknown object '" + args[0] +
-					"' (try: " + String.Join(", ", dict.Keys) + ").");
+					"' (try: " + string.Join(", ", dict.Keys) + ").");
 			}
 		}
 
@@ -86,7 +82,7 @@ namespace Network.Sim.Core {
 		/// <param name="args">an array of arguments passed to the command.</param>
 		static void RunTo(string[] args) {
 			try {
-				Match m = Regex.Match(args[0], @"^(\d+)(ns|µs|ms|s)$");
+				var m = Regex.Match(args[0], @"^(\d+)(ns|µs|ms|s)$");
 				if(!m.Success)
 					throw new ArgumentException("Invalid time value " +
 						"(ex. 'RunTo 2000µs').");
@@ -94,7 +90,7 @@ namespace Network.Sim.Core {
 					{ "ns", 1 }, { "µs", 1000 }, { "ms", 1000000 },
 					{ "s", 1000000000 }
 				};
-				ulong timestamp = UInt64.Parse(m.Groups[1].ToString()) *
+				var timestamp = ulong.Parse(m.Groups[1].ToString()) *
 					multipliers[m.Groups[2].ToString()];
 				if (timestamp <= Simulation.Time)
 					throw new ArgumentException("Timestamp must be greater than current " +
@@ -113,7 +109,7 @@ namespace Network.Sim.Core {
 		/// <param name="args">an array of arguments passed to the command.</param>
 		static void RunFor(string[] args) {
 			try {
-				Match m = Regex.Match(args[0], @"^(\d+)(ns|µs|ms|s)$");
+				var m = Regex.Match(args[0], @"^(\d+)(ns|µs|ms|s)$");
 				if (!m.Success)
 					throw new ArgumentException("Invalid time value " +
 						"(ex. 'RunFor 2000µs').");
@@ -121,7 +117,7 @@ namespace Network.Sim.Core {
 					{ "ns", 1 }, { "µs", 1000 }, { "ms", 1000000 },
 					{ "s", 1000000000 }
 				};
-				ulong timestamp = UInt64.Parse(m.Groups[1].ToString()) *
+				var timestamp = ulong.Parse(m.Groups[1].ToString()) *
 					multipliers[m.Groups[2].ToString()];
 				Print("Running simulation for " + timestamp.ToString("D8") + "ns.",
 					ConsoleColor.Green);
@@ -136,7 +132,7 @@ namespace Network.Sim.Core {
 		/// </summary>
 		/// <param name="args">an arry of arguments passed to the command.</param>
 		static void Output(string[] args) {
-			Dictionary<string, OutputLevel> opts =
+			var opts =
 				new Dictionary<string, OutputLevel>(StringComparer.InvariantCultureIgnoreCase) {
 					{ "Simulation", OutputLevel.Simulation },
 					{ "Physical", OutputLevel.Physical },
@@ -146,9 +142,9 @@ namespace Network.Sim.Core {
 					{ "Icmp", OutputLevel.Icmp }
 			};
 			try {
-				string[] parts = args[0].Split('|');
+				var parts = args[0].Split('|');
 				OutputLevel level = 0;
-				foreach (string s in parts) {
+				foreach (var s in parts) {
 					if (opts.ContainsKey(s))
 						level |= opts[s];
 					else
@@ -172,7 +168,7 @@ namespace Network.Sim.Core {
 		static void Help(string[] args) {
 			Print("Press [Enter] to run to next simulation event or enter any " +
 				"of the following commands: ", ConsoleColor.Cyan);
-			foreach (string command in commands.Keys)
+			foreach (var command in commands.Keys)
 				Print(" - " + command, ConsoleColor.Yellow);
 		}
 
@@ -185,15 +181,15 @@ namespace Network.Sim.Core {
 		static void ShowArpTable(string[] args) {
 			try {
 				var tuple = ParseHostInterface(args[0]);
-				Host host = GetHostByName(tuple.Item1);
-				Interface ifc = GetInterfaceByName(tuple.Item1, tuple.Item2);
+				var host = GetHostByName(tuple.Item1);
+				var ifc = GetInterfaceByName(tuple.Item1, tuple.Item2);
 				Print("Showing ARP table of interface '" + tuple.Item2 + "' of " +
 					"host '" + tuple.Item1 + "':", ConsoleColor.Green);
-				Print(String.Format("{0,15} | {1,20} | {2,15} |",
+				Print(string.Format("{0,15} | {1,20} | {2,15} |",
 					"IP Address", "MAC Address", "Expiry Time"));
 				Print("");
-				foreach (ArpEntry e in host.Network.ArpTableOf(ifc)) {
-					string s = String.Format("{0,15} | {1,20} | {2,15} |",
+				foreach (var e in host.Network.ArpTableOf(ifc)) {
+					var s = string.Format("{0,15} | {1,20} | {2,15} |",
 						e.IpAddress, e.MacAddress, e.ExpiryTime);
 					Print(s, ConsoleColor.Red);			
 				}
@@ -210,14 +206,14 @@ namespace Network.Sim.Core {
 		/// is invalid.</exception>
 		static void ShowInterfaces(string[] args) {
 			try {
-				string hostName = ParseHost(args[0]);
-				Host host = GetHostByName(hostName);
+				var hostName = ParseHost(args[0]);
+				var host = GetHostByName(hostName);
 				Print("Showing Interfaces of host '" + hostName + "':", ConsoleColor.Green);
-				Print(String.Format("{0,5} | {1,16} | {2,15} | {3,15} | {4,20} |  ",
+				Print(string.Format("{0,5} | {1,16} | {2,15} | {3,15} | {4,20} |  ",
 					"Name", "IP Address", "Subnetmask", "Gateway", "MAC Address"));
 				Print("");
-				foreach (Interface ifc in host.Interfaces.Values) {
-					string s = String.Format("{0,5} | {1,16} | {2,15} | {3,15} | {4,20} |",
+				foreach (var ifc in host.Interfaces.Values) {
+					var s = string.Format("{0,5} | {1,16} | {2,15} | {3,15} | {4,20} |",
 						ifc.Name, ifc.IpAddress, ifc.Netmask, ifc.Gateway,
 						ifc.Nic.MacAddress);
 					Print(s, ConsoleColor.Cyan);
@@ -236,22 +232,21 @@ namespace Network.Sim.Core {
 		static void ShowOutputQueue(string[] args) {
 			try {
 				var tuple = ParseHostInterface(args[0]);
-				Host host = GetHostByName(tuple.Item1);
-				Interface ifc = GetInterfaceByName(tuple.Item1, tuple.Item2);
+				var host = GetHostByName(tuple.Item1);
+				var ifc = GetInterfaceByName(tuple.Item1, tuple.Item2);
 				Print("Showing output queue of interface '" + tuple.Item2 + "' of " +
 					"host '" + tuple.Item1 + "':", ConsoleColor.Green);
 				var queue = host.Network.OutputQueueOf(ifc);
-				int percent = (int) ((queue.Count / (double) queue.MaxCapacity) * 100);
+				var percent = (int) ((queue.Count / (double) queue.MaxCapacity) * 100);
 				Print(queue.Count + " IP packets enqueued.", ConsoleColor.Yellow);
-				StringBuilder b = new StringBuilder();
-				percent = 73;
-				int numSpaces = 40;
-				int numBars = (int)((numSpaces / 100.0) * percent);
+				var b = new StringBuilder();
+				var numSpaces = 40;
+				var numBars = (int)((numSpaces / 100.0) * percent);
 				b.Append("[");
-				for (int i = 0; i < numSpaces; i++)
+				for (var i = 0; i < numSpaces; i++)
 					b.Append(i < numBars ? "|" : " ");
 				b.Append("] " + (100 - percent) + "% queue capacity left.");
-				ConsoleColor color = percent < 30 ? ConsoleColor.Green :
+				var color = percent < 30 ? ConsoleColor.Green :
 					(percent < 60 ? ConsoleColor.Yellow : ConsoleColor.Red);
 				Print(b.ToString(), color);
 			} catch (IndexOutOfRangeException) {
@@ -267,14 +262,14 @@ namespace Network.Sim.Core {
 		/// is invalid.</exception>
 		static void ShowRoutingTable(string[] args) {
 			try {
-				string hostName = ParseHost(args[0]);
-				Host host = GetHostByName(hostName);
+				var hostName = ParseHost(args[0]);
+				var host = GetHostByName(hostName);
 				Print("Showing routing table of host '" + hostName + "':", ConsoleColor.Green);
-				Print(String.Format("{0,15} | {1,15} | {2,15} | {3,15} | {4,7} | ",
+				Print(string.Format("{0,15} | {1,15} | {2,15} | {3,15} | {4,7} | ",
 					"Destination", "Subnetmask", "Gateway", "Interface", "Metric"));
 				Print("");
-				foreach (Route route in host.Routes) {
-					string s = String.Format("{0,15} | {1,15} | {2,15} | {3,15} | {4,7} | ",
+				foreach (var route in host.Routes) {
+					var s = string.Format("{0,15} | {1,15} | {2,15} | {3,15} | {4,7} | ",
 					route.Destination, route.Netmask, route.Gateway,
 					route.Interface.IpAddress, route.Metric);
 					Print(s, ConsoleColor.Cyan);
@@ -290,14 +285,14 @@ namespace Network.Sim.Core {
 		/// <param name="args"></param>
 		static void ShowHosts(string[] args) {
 			Print("Listing all Hosts:", ConsoleColor.Green);
-			Print(String.Format("{0,25} | {1,25} | {2,25} | ",
+			Print(string.Format("{0,25} | {1,25} | {2,25} | ",
 				"Hostname", "No. of Interfaces", "Nodal Processing Delay"));
 			Print("");
 			foreach (var pair in Simulation.Objects) {
-				Host host = pair.Value as Host;
+				var host = pair.Value as Host;
 				if (host == null)
 					continue;
-				string s = String.Format("{0,25} | {1,25} | {2,25} | ",
+				var s = string.Format("{0,25} | {1,25} | {2,25} | ",
 				host.Hostname, host.Interfaces.Count, host.NodalProcessingDelay + "ns");
 				Print(s, ConsoleColor.Cyan);
 			}
@@ -310,11 +305,11 @@ namespace Network.Sim.Core {
 		static void ShowObjects(string[] args) {
 			Print("Listing all objects registered with the simulation:",
 				ConsoleColor.Green);
-			Print(String.Format("{0,25} | {1,25} | ",
+			Print(string.Format("{0,25} | {1,25} | ",
 				"Name", "Type"));
 			Print("");
 			foreach (var pair in Simulation.Objects) {
-				string s = String.Format("{0,25} | {1,25} | ", pair.Key,
+				var s = string.Format("{0,25} | {1,25} | ", pair.Key,
 					pair.Value.GetType().Name);
 				Print(s, ConsoleColor.Cyan);
 			}
@@ -326,27 +321,27 @@ namespace Network.Sim.Core {
 		/// <param name="args"></param>
 		static void ShowForwardTable(string[] args) {
 			try {
-				string name = ParseHost(args[0]);
+				var name = ParseHost(args[0]);
 				if (!Simulation.Objects.ContainsKey(name))
 					throw new ArgumentException("An object with the name of '" + name +
 						"' could not be found.");
-				Bridge bridge = Simulation.Objects[name] as Bridge;
+				var bridge = Simulation.Objects[name] as Bridge;
 				if (bridge == null)
 					throw new ArgumentException("The object with the name of '" + name +
 						"' is not of type Bridge.");
 				Print("Showing forwarding table of bridge '" + name + "':",
 					ConsoleColor.Green);
-				Print(String.Format("{0,25} | {1,25} | ", "MAC Address", "Port"));
+				Print(string.Format("{0,25} | {1,25} | ", "MAC Address", "Port"));
 				Print("");
 				foreach (var pair in bridge.ForwardTable) {
-					int index = 0;
-					for (int i = 0; i < bridge.Ports.Count; i++) {
+					var index = 0;
+					for (var i = 0; i < bridge.Ports.Count; i++) {
 						if (bridge.Ports[i] == pair.Value) {
 							index = i;
 							break;
 						}
 					}
-					string s = String.Format("{0,25} | {1,25} | ",
+					var s = string.Format("{0,25} | {1,25} | ",
 						pair.Key, index);
 					Print(s, ConsoleColor.Cyan);
 				}
@@ -366,7 +361,7 @@ namespace Network.Sim.Core {
 		/// <exception cref="FormatException">Thrown if the specified token
 		/// is not in the expected format.</exception>
 		static Tuple<string, string> ParseHostInterface(string token) {
-			Match m = Regex.Match(token, @"^\[(.+)::(.+)\]$");
+			var m = Regex.Match(token, @"^\[(.+)::(.+)\]$");
 			if (!m.Success)
 				throw new FormatException("Invalid host and/or interface " +
 					"(ex. '[Router::eth0]').");
@@ -382,7 +377,7 @@ namespace Network.Sim.Core {
 		/// <exception cref="FormatException">Thrown if the specified token
 		/// is not in the expected format.</exception>
 		static string ParseHost(string token) {
-			Match m = Regex.Match(token, @"^\[(.+)\]$");
+			var m = Regex.Match(token, @"^\[(.+)\]$");
 			if(!m.Success)
 				throw new FormatException("Invalid host format " +
 					"(ex. '[Router]').");
@@ -401,7 +396,7 @@ namespace Network.Sim.Core {
 			if(!Simulation.Objects.ContainsKey(hostName))
 				throw new ArgumentException("A host with the specified hostname of " +
 					"'" + hostName + "' could not be found.");
-			Host host = Simulation.Objects[hostName] as Host;
+			var host = Simulation.Objects[hostName] as Host;
 			if(host == null)
 				throw new ArgumentException("The object with the name of " +
 					"'" + hostName + "' is not of type Host.");
@@ -422,8 +417,8 @@ namespace Network.Sim.Core {
 		/// matching hostname could be found or none of the hosts interfaces
 		/// match the specified interface name.</exception>
 		static Interface GetInterfaceByName(string hostName, string ifName) {
-			Host host = GetHostByName(hostName);
-			foreach (string name in host.Interfaces.Keys) {
+			var host = GetHostByName(hostName);
+			foreach (var name in host.Interfaces.Keys) {
 				if (name == ifName)
 					return host.Interfaces[name];
 			}
@@ -438,7 +433,7 @@ namespace Network.Sim.Core {
 		/// <param name="s">The string to print on standard out.</param>
 		/// <param name="color">The text color to use for printing.</param>
 		static void Print(string s, ConsoleColor color = ConsoleColor.Gray) {
-			ConsoleColor old = Console.ForegroundColor;
+			var old = Console.ForegroundColor;
 			Console.ForegroundColor = color;
 			Console.WriteLine(s);
 			Console.ForegroundColor = old;
@@ -448,9 +443,9 @@ namespace Network.Sim.Core {
 		/// Deletes the last line of console input.
 		/// </summary>
 		static void ClearLastConsoleLine() {
-			int currentLineCursor = Console.CursorTop - 1;
+			var currentLineCursor = Console.CursorTop - 1;
 			Console.SetCursorPosition(0, Console.CursorTop);
-			for (int i = 0; i < Console.WindowWidth; i++)
+			for (var i = 0; i < Console.WindowWidth; i++)
 				Console.Write(" ");
 			Console.SetCursorPosition(0, currentLineCursor);
 		}

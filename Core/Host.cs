@@ -1,5 +1,4 @@
-﻿using Network.Sim.Lan.Ethernet;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Network.Sim.Network.Ip;
 using Network.Sim.Network.Ip.Routing;
@@ -53,15 +52,17 @@ namespace Network.Sim.Core {
 		/// <summary>
 		/// The host's routing table.
 		/// </summary>
-		RoutingTable routingTable = new RoutingTable();
+		readonly RoutingTable routingTable = new RoutingTable();
 
-		/// <summary>
-		/// Initializes a new instance of the Host class.
-		/// </summary>
-		/// <param name="hostName">The host's name.</param>
-		/// <exception cref="ArgumentNullException">Thrown if the hostName
-		/// parameter is null.</exception>
-		public Host(string hostName, ulong nodalProcessingDelay = 20000,
+	    /// <summary>
+	    /// Initializes a new instance of the Host class.
+	    /// </summary>
+	    /// <param name="hostName">The host's name.</param>
+	    /// <param name="nodalProcessingDelay"></param>
+	    /// <param name="interfaces"></param>
+	    /// <exception cref="ArgumentNullException">Thrown if the hostName
+	    /// parameter is null.</exception>
+	    public Host(string hostName, ulong nodalProcessingDelay = 20000,
 			IEnumerable<Interface> interfaces = null) {
 			hostName.ThrowIfNull("hostName");
 			Hostname = hostName;
@@ -72,26 +73,18 @@ namespace Network.Sim.Core {
 			Routes = routingTable;
 
 			if (interfaces != null) {
-				foreach (Interface ifc in interfaces)
+				foreach (var ifc in interfaces)
 					RegisterInterface(ifc);
 			}
 		}
 
-		/// <summary>
-		/// Registers a new network interface with the host.
-		/// </summary>
-		/// <param name="nic">The network interface card (NIC) to associate with
-		/// the new interface.</param>
-		/// <param name="name">The name of the interface.</param>
-		/// <param name="ipAddress">The IPv4 address to configure the interface
-		/// with.</param>
-		/// <param name="netmask">The subnetmask to configure the interface
-		/// with.</param>
-		/// <param name="gateway">The IPv4 address of the default gateway to
-		/// configure the interface with.</param>
-		/// <exception cref="ArgumentNullException">Thrown if any of the
-		/// arguments is null.</exception>
-		public void RegisterInterface(Interface ifc) {
+	    /// <summary>
+	    /// Registers a new network interface with the host.
+	    /// </summary>
+	    /// <param name="ifc"></param>
+	    /// <exception cref="ArgumentNullException">Thrown if any of the
+	    /// arguments is null.</exception>
+	    public void RegisterInterface(Interface ifc) {
 			ifc.ThrowIfNull("ifc");
 			Interfaces.Add(ifc.Name, ifc);
 
@@ -121,8 +114,8 @@ namespace Network.Sim.Core {
 			string ifName, int metric, int? index = null) {
 				if (!Interfaces.ContainsKey(ifName))
 					throw new ArgumentException("The interface '" + ifName + "' " +
-						"could not be found", "ifName");
-				Interface ifc = Interfaces[ifName];
+						"could not be found", nameof(ifName));
+				var ifc = Interfaces[ifName];
 				AddRoute(cidrNetworkId, gateway, ifc, metric, index);
 		}
 

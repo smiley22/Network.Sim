@@ -68,7 +68,7 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <summary>
 		/// The NIC's output FIFO buffer.
 		/// </summary>
-		CappedQueue<Frame> sendFifo = new CappedQueue<Frame>();
+		readonly CappedQueue<Frame> sendFifo = new CappedQueue<Frame>();
 
 		/// <summary>
 		/// Determines whether the output FIFO is currently being emptied.
@@ -99,11 +99,11 @@ namespace Network.Sim.Lan.Ethernet {
 		/// Removes a queued frame from the output FIFO and transmits it.
 		/// </summary>
 		void EmptySendFifo() {
-			Frame frame = sendFifo.Dequeue();
+			var frame = sendFifo.Dequeue();
 			WriteMac("Outputting an Ethernet frame for " + frame.Destination + ".");
 			emptyingFifo = true;
 			// Serialize the Ethernet frame object into a sequence of bytes.
-			byte[] frameBytes = frame.Serialize();
+			var frameBytes = frame.Serialize();
 			// Call into the physical layer to put the bytes "on the wire".
 			Transmit(frameBytes);
 		}
@@ -114,10 +114,10 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <param name="data">The data that was received.</param>
 		void OnDataReceived(byte[] data) {
 			data.ThrowIfNull("data");
-			Frame frame = Frame.Deserialize(data);
+			var frame = Frame.Deserialize(data);
 			WriteMac("Received an Ethernet frame.");
 			// Compute checksum and compare to the one contained in the frame.
-			uint fcs = Frame.ComputeCheckSequence(frame);
+			var fcs = Frame.ComputeCheckSequence(frame);
 			if (fcs != frame.CheckSequence) {
 				WriteMac("Detected a bad frame check sequence, discarding.");
 				return;
@@ -219,7 +219,7 @@ namespace Network.Sim.Lan.Ethernet {
 			if (rx && tx) {
 				// Collision.
 				WritePhy("Collision detected.");
-				ulong jamTime = Connector.Jam();
+				var jamTime = Connector.Jam();
 				ExponentialBackoff(jamTime);
 			} else {
 				rx = true;
@@ -255,7 +255,7 @@ namespace Network.Sim.Lan.Ethernet {
 			// Defer transmission until medium becomes idle.
 			if (rx) {
 				// Poll medium about every 10µs.
-				ulong timeout = (ulong) (10000 + random.Next(5000));
+				var timeout = (ulong) (10000 + random.Next(5000));
 				WritePhy("Deferring transmission, next try at " + timeout);
 				Simulation.Callback(timeout, () => Transmit(data));
 			} else {
@@ -302,12 +302,12 @@ namespace Network.Sim.Lan.Ethernet {
 				// Wait a random number of slot-times, with a slot-time being
 				// defined as the transmission time of 512 bits.
 				// (Cmp, "Computer Networks", 5th Ed., A. Tanenbaum, p.285)
-				int c = random.Next((int) Math.Pow(2,
+				var c = random.Next((int) Math.Pow(2,
 					Math.Min(retransmissionCount, maxExponentiation)));
 				// (Ex., the slot-time on 10Mbps Ethernet is 51.2µsec)
-				ulong slotTime = (ulong) ((512 / (double) configuredBitrate) *
+				var slotTime = (ulong) ((512 / (double) configuredBitrate) *
 					1000000000);
-				ulong waitTime = (ulong) c * slotTime;
+				var waitTime = (ulong) c * slotTime;
 				WritePhy("Waiting for " + waitTime + " (" + c +
 					" slot times), " + retransmissionCount + ".Try, Total = " +
 					(deltaTime + waitTime));

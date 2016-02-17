@@ -1,8 +1,8 @@
 ﻿
 namespace Network.Sim.Core {
 	public class SignalCeaseEvent : Event {
-		Connector connector;
-		byte[] data;
+	    readonly Connector connector;
+	    readonly byte[] data;
 
 		public SignalCeaseEvent(ulong timeout, Connector connector, byte[] data, object sender = null)
 			: base(timeout, sender) {

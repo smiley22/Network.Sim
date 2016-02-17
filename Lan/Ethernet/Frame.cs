@@ -79,7 +79,7 @@ namespace Network.Sim.Lan.Ethernet {
 				payload.ThrowIfNull("payload");
 				if (payload.Length > MaximumPayloadSize)
 					throw new ArgumentException("The frame payload data must " +
-						"not exceed 1500 bytes of data.", "payload");
+						"not exceed 1500 bytes of data.", nameof(payload));
 				Destination = destination;
 				Source = source;
 				Payload = payload;
@@ -130,7 +130,7 @@ namespace Network.Sim.Lan.Ethernet {
 		/// EthernetFrame class.</returns>
 		public byte[] Serialize() {
 			// Ensure the frame meets the minimum size requirements.
-			byte[] payloadBuffer = Payload;
+			var payloadBuffer = Payload;
 			if (Payload.Length < minimumPayloadSize) {
 				payloadBuffer = new byte[minimumPayloadSize];
 				Array.Copy(Payload, payloadBuffer, Payload.Length);
@@ -159,17 +159,17 @@ namespace Network.Sim.Lan.Ethernet {
 		/// null.</exception>
 		public static Frame Deserialize(byte[] data) {
 			data.ThrowIfNull("data");
-			using (MemoryStream ms = new MemoryStream(data)) {
-				using (BinaryReader reader = new BinaryReader(ms)) {
+			using (var ms = new MemoryStream(data)) {
+				using (var reader = new BinaryReader(ms)) {
 					MacAddress dest = new MacAddress(reader.ReadBytes(6)),
 						source = new MacAddress(reader.ReadBytes(6));
-					EtherType type = (EtherType) reader.ReadInt16();
-					int payloadLen = reader.ReadInt32();
-					byte[] payload = reader.ReadBytes(payloadLen);
+					var type = (EtherType) reader.ReadInt16();
+					var payloadLen = reader.ReadInt32();
+					var payload = reader.ReadBytes(payloadLen);
 					// Skip the padding bytes, if any.
 					if (payloadLen < minimumPayloadSize)
 						reader.ReadBytes(minimumPayloadSize - payloadLen);
-					uint fcs = reader.ReadUInt32();
+					var fcs = reader.ReadUInt32();
 					return new Frame(dest, source, payload, fcs, type);
 				}
 			}

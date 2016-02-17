@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Network.Sim.Link {
+﻿namespace Network.Sim.Link {
 	/// <summary>
 	/// Represents the EtherType field of an Ethernet frame. It indicates which
 	/// protocol is encapsulated in the payload of an Ethernet Frame.

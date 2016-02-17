@@ -30,7 +30,7 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <summary>
 		/// The bridges's I/O ports.
 		/// </summary>
-		List<Connector> ports = new List<Connector>();
+		readonly List<Connector> ports = new List<Connector>();
 
 		/// <summary>
 		/// Initializes a new instance of the Bridge class.
@@ -38,8 +38,8 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <param name="numPorts">The number of I/O ports.</param>
 		/// <param name="delay">The inherent propagation delay of the bridge.</param>
 		public Bridge(int numPorts, ulong delay) {
-			for (int i = 0; i < numPorts; i++) {
-				Connector c = new Connector();
+			for (var i = 0; i < numPorts; i++) {
+				var c = new Connector();
 				c.SignalSense += (sender, e) => OnSignalSense(c);
 				c.SignalCease += (sender, e) => OnSignalCease(c, sender, e);
 				ports.Add(c);
@@ -97,13 +97,13 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <summary>
 		/// A list of input buffers for each of the bridge's receivers.
 		/// </summary>
-		IDictionary<Connector, CappedQueue<Frame>> inputFifo =
+		readonly IDictionary<Connector, CappedQueue<Frame>> inputFifo =
 			new Dictionary<Connector, CappedQueue<Frame>>();
 
 		/// <summary>
 		/// A list of output buffers for each of the bridge's transmitters.
 		/// </summary>
-		IDictionary<Connector, CappedQueue<Frame>> outputFifo =
+		readonly IDictionary<Connector, CappedQueue<Frame>> outputFifo =
 			new Dictionary<Connector, CappedQueue<Frame>>();
 
 		/// <summary>
@@ -114,33 +114,34 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <summary>
 		/// The bridge's forwarding table.
 		/// </summary>
-		IDictionary<MacAddress, Connector> forwardTable =
+		readonly IDictionary<MacAddress, Connector> forwardTable =
 			new Dictionary<MacAddress, Connector>();
 
 		/// <summary>
 		/// Saves a timestamp for each connector at which the next transmission
 		/// may, at earliest, occur.
 		/// </summary>
-		IDictionary<Connector, ulong> waitTime =
+		readonly IDictionary<Connector, ulong> waitTime =
 			new Dictionary<Connector, ulong>();
 
 		/// <summary>
 		/// Determines whether a transmitter is currently able to transmit data.
 		/// </summary>
-		IDictionary<Connector, bool> isIdle =
+		readonly IDictionary<Connector, bool> isIdle =
 			new Dictionary<Connector, bool>();
 
-		/// <summary>
-		/// Invoked on behalf of PHY whenever new data has been received.
-		/// </summary>
-		/// <param name="data">The data that was received.</param>
-		void OnDataReceived(Connector connector, byte[] data) {
+	    /// <summary>
+	    /// Invoked on behalf of PHY whenever new data has been received.
+	    /// </summary>
+	    /// <param name="connector"></param>
+	    /// <param name="data">The data that was received.</param>
+	    void OnDataReceived(Connector connector, byte[] data) {
 			data.ThrowIfNull("data");
 			WriteMac("Received an Ethernet frame.");
 			waitTime[connector] = Simulation.Time + interframeGapTime(connector);
-			Frame frame = Frame.Deserialize(data);
+			var frame = Frame.Deserialize(data);
 			// Compute checksum and compare to the one contained in the frame.
-			uint fcs = Frame.ComputeCheckSequence(frame);
+			var fcs = Frame.ComputeCheckSequence(frame);
 			if (fcs != frame.CheckSequence) {
 				WriteMac("Detected a bad frame check sequence, discarding.");
 				return;
@@ -170,16 +171,16 @@ namespace Network.Sim.Lan.Ethernet {
 				// FIFO is empty.
 				if (pair.Value.Count == 0)
 					continue;
-				Frame frame = pair.Value.Dequeue();
+				var frame = pair.Value.Dequeue();
 				// We already know where to forward this frame to.
 				if (forwardTable.ContainsKey(frame.Destination)) {
 					WriteMac("Queueing frame for I/O port.");
-					Connector outport = forwardTable[frame.Destination];
+					var outport = forwardTable[frame.Destination];
 					outputFifo[outport].Enqueue(frame);
 				} else {
 					WriteMac("Flooding");
 					// Flood it out on all other ports.
-					foreach (Connector port in ports) {
+					foreach (var port in ports) {
 						if (forwardTable[frame.Source] == port)
 							continue;
 						if (!port.IsConnected)
@@ -197,7 +198,7 @@ namespace Network.Sim.Lan.Ethernet {
 					continue;
 				if (waitTime[pair.Key] > Simulation.Time)
 					continue;
-				Frame frame = pair.Value.Dequeue();
+				var frame = pair.Value.Dequeue();
 				isIdle[pair.Key] = false;
 				Transmit(pair.Key, frame.Serialize());
 				break;
@@ -223,7 +224,7 @@ namespace Network.Sim.Lan.Ethernet {
 		/// </summary>
 		/// <returns>The total number of frames currently enqueued.</returns>
 		int NumQueuedFrames() {
-			int numFrames = 0;
+			var numFrames = 0;
 			foreach (var fifo in inputFifo.Values)
 				numFrames = numFrames + fifo.Count;
 			foreach (var fifo in outputFifo.Values)
@@ -241,12 +242,12 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <summary>
 		/// The transmitter signal of each of the bridge's transmitters.
 		/// </summary>
-		IDictionary<Connector, bool> tx = new Dictionary<Connector, bool>();
+		readonly IDictionary<Connector, bool> tx = new Dictionary<Connector, bool>();
 
 		/// <summary>
 		/// The receiver signal of each of the bridge's receivers.
 		/// </summary>
-		IDictionary<Connector, bool> rx = new Dictionary<Connector, bool>();
+		readonly IDictionary<Connector, bool> rx = new Dictionary<Connector, bool>();
 
 		/// <summary>
 		/// The maximum number of attempted retransmissions in CSMA/CD.
@@ -261,13 +262,13 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <summary>
 		/// The number of attempted retransmissions.
 		/// </summary>
-		IDictionary<Connector, int> retransmissionCount =
+		readonly IDictionary<Connector, int> retransmissionCount =
 			new Dictionary<Connector, int>();
 
 		/// <summary>
 		/// The data that is currently being transmitted.
 		/// </summary>
-		IDictionary<Connector, byte[]> transmissionData =
+		readonly IDictionary<Connector, byte[]> transmissionData =
 			new Dictionary<Connector, byte[]>();
 
 		int configuredBitrate(Connector connector) {
@@ -288,19 +289,21 @@ namespace Network.Sim.Lan.Ethernet {
 			if (rx[connector] && tx[connector]) {
 				// Collision.
 				WritePhy("Collision detected.");
-				ulong jamTime = connector.Jam();
+				var jamTime = connector.Jam();
 				ExponentialBackoff(connector, jamTime);
 			} else {
 				rx[connector] = true;
 			}
 		}
 
-		/// <summary>
-		/// Invoked whenever the carrier signal ceases.
-		/// </summary>
-		/// <param name="connector">The connector which is no longer
-		/// sensing a signal.</param>
-		void OnSignalCease(Connector connector, object sender, SignalCeaseEventArgs e) {
+	    /// <summary>
+	    /// Invoked whenever the carrier signal ceases.
+	    /// </summary>
+	    /// <param name="connector">The connector which is no longer
+	    /// sensing a signal.</param>
+	    /// <param name="sender"></param>
+	    /// <param name="e"></param>
+	    void OnSignalCease(Connector connector, object sender, SignalCeaseEventArgs e) {
 			if (tx[connector])
 				WritePhy("Finished transmitting bits.");
 			rx[connector] = false;
@@ -316,15 +319,16 @@ namespace Network.Sim.Lan.Ethernet {
 				OnDataReceived(connector, e.Data);
 		}
 
-		/// <summary>
-		/// Transmits the specified data.
-		/// </summary>
-		/// <param name="data">The data to transmit.</param>
-		void Transmit(Connector connector, byte[] data) {
+	    /// <summary>
+	    /// Transmits the specified data.
+	    /// </summary>
+	    /// <param name="connector"></param>
+	    /// <param name="data">The data to transmit.</param>
+	    void Transmit(Connector connector, byte[] data) {
 			// Defer transmission until medium becomes idle.
 			if (rx[connector]) {
 				// Poll medium about every 10µs.
-				ulong timeout = (ulong) (10000 + random.Next(5000));
+				var timeout = (ulong) (10000 + random.Next(5000));
 				WritePhy("Deferring transmission, next try at " + timeout);
 				Simulation.Callback(timeout, () => Transmit(connector, data));
 			} else {
@@ -334,11 +338,12 @@ namespace Network.Sim.Lan.Ethernet {
 			}
 		}
 
-		/// <summary>
-		/// Starts the actual data transfer.
-		/// </summary>
-		/// <param name="data">The data to transmit.</param>
-		void StartTransmission(Connector connector, byte[] data) {
+	    /// <summary>
+	    /// Starts the actual data transfer.
+	    /// </summary>
+	    /// <param name="connector"></param>
+	    /// <param name="data">The data to transmit.</param>
+	    void StartTransmission(Connector connector, byte[] data) {
 			// If the medium is no longer idle at this point, start over.
 			if (rx[connector]) {
 				Transmit(connector, data);
@@ -360,11 +365,12 @@ namespace Network.Sim.Lan.Ethernet {
 			retransmissionCount[connector] = 0;
 		}
 
-		/// <summary>
-		/// Performs the exponential backoff algorithm of CSMA/CD.
-		/// </summary>
-		/// <param name="deltaTime"></param>
-		void ExponentialBackoff(Connector connector, ulong deltaTime) {
+	    /// <summary>
+	    /// Performs the exponential backoff algorithm of CSMA/CD.
+	    /// </summary>
+	    /// <param name="connector"></param>
+	    /// <param name="deltaTime"></param>
+	    void ExponentialBackoff(Connector connector, ulong deltaTime) {
 			retransmissionCount[connector]++;
 			if (retransmissionCount[connector] >= maxRetransmissions) {
 				AbortTransmission(connector);
@@ -372,16 +378,16 @@ namespace Network.Sim.Lan.Ethernet {
 				// Wait a random number of slot-times, with a slot-time being
 				// defined as the transmission time of 512 bits.
 				// (Cmp, "Computer Networks", 5th Ed., A. Tanenbaum, p.285)
-				int c = random.Next((int) Math.Pow(2,
+				var c = random.Next((int) Math.Pow(2,
 					Math.Min(retransmissionCount[connector], maxExponentiation)));
 				// (Ex., the slot-time on 10Mbps Ethernet is 51.2µsec)
-				ulong slotTime = (ulong) ((512 / (double)
+				var slotTime = (ulong) ((512 / (double)
 					configuredBitrate(connector)) * 1000000000);
-				ulong waitTime = (ulong) c * slotTime;
-				WritePhy("Waiting for " + waitTime + " (" + c +
+				var _waitTime = (ulong) c * slotTime;
+				WritePhy("Waiting for " + _waitTime + " (" + c +
 					" slot times), " + retransmissionCount + ".Try, Total = " +
-					(deltaTime + waitTime));
-				Simulation.Callback(deltaTime + waitTime,
+					(deltaTime + _waitTime));
+				Simulation.Callback(deltaTime + _waitTime,
 					() => Transmit(connector, transmissionData[connector]));
 			}
 		}

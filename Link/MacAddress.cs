@@ -7,12 +7,12 @@ namespace Network.Sim.Link {
 	/// Represents a 48-bit MAC address.
 	/// </summary>
 	public class MacAddress {
-		static Random random = new Random();
+		static readonly Random random = new Random();
 
 		/// <summary>
 		/// The byte array storing the address.
 		/// </summary>
-		byte[] address = new byte[6];
+		readonly byte[] address = new byte[6];
 
 		/// <summary>
 		/// The MAC address as an array of bytes.
@@ -43,8 +43,8 @@ namespace Network.Sim.Link {
 			address.ThrowIfNull("address");
 			if (address.Length != 6)
 				throw new ArgumentException("The array must have a size of 6 bytes.",
-					"address");
-			for (int i = 0; i < address.Length; i++)
+					nameof(address));
+			for (var i = 0; i < address.Length; i++)
 				this.address[i] = address[i];
 		}
 
@@ -63,8 +63,8 @@ namespace Network.Sim.Link {
 		/// </summary>
 		/// <returns>A textual representation of this MAC address.</returns>
 		public override string ToString() {
-			StringBuilder b = new StringBuilder();
-			for (int i = 0; i < address.Length; i++) {
+			var b = new StringBuilder();
+			for (var i = 0; i < address.Length; i++) {
 				b.Append(address[i].ToString("X2"));
 				if (i < (address.Length - 1))
 					b.Append(":");
@@ -82,10 +82,10 @@ namespace Network.Sim.Link {
 		public override bool Equals(object obj) {
 			if (obj == null)
 				return false;
-			MacAddress other = obj as MacAddress;
+			var other = obj as MacAddress;
 			if (other == null)
 				return false;
-			for (int i = 0; i < address.Length; i++) {
+			for (var i = 0; i < address.Length; i++) {
 				if (address[i] != other.address[i])
 					return false;
 			}
@@ -97,8 +97,8 @@ namespace Network.Sim.Link {
 		/// </summary>
 		/// <returns>The hash code of this MacAddress instance.</returns>
 		public override int GetHashCode() {
-			int hash = 13;
-			foreach (byte b in address)
+			var hash = 13;
+			foreach (var b in address)
 				hash = (hash * 7) + b.GetHashCode();
 			return hash;
 		}
@@ -115,7 +115,7 @@ namespace Network.Sim.Link {
 				return true;
 			if (((object) a == null) || ((object) b == null))
 				return false;
-			for (int i = 0; i < a.address.Length; i++)
+			for (var i = 0; i < a.address.Length; i++)
 				if (a.address[i] != b.address[i])
 					return false;
 			return true;
@@ -146,13 +146,13 @@ namespace Network.Sim.Link {
 		/// </exception>
 		private static byte[] Parse(string address) {
 			address.ThrowIfNull("address");
-			string[] p = address.Split(':', '-');
+			var p = address.Split(':', '-');
 			if (p.Length != 6)
 				throw new ArgumentException("Invalid MAC address.");
-			byte[] addr = new byte[6];
+			var addr = new byte[6];
 			try {
-				for (int i = 0; i < p.Length; i++)
-					addr[i] = Byte.Parse(p[i], NumberStyles.HexNumber);
+				for (var i = 0; i < p.Length; i++)
+					addr[i] = byte.Parse(p[i], NumberStyles.HexNumber);
 			} catch {
 				throw new ArgumentException("Invalid MAC address.");
 			}

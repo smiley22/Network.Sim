@@ -65,7 +65,7 @@ namespace Network.Sim.Lan {
 		/// </summary>
 		/// <param name="address">A MAC-48 address to assign to the NIC. If this
 		/// is null, the NIC is assigned a random MAC address.</param>
-		public Nic(MacAddress address = null) {
+		protected Nic(MacAddress address = null) {
 			if (address != null)
 				MacAddress = address;
 			else

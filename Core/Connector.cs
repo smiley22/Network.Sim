@@ -1,5 +1,4 @@
 ﻿using System;
-using Network.Sim.Core;
 
 namespace Network.Sim.Core {
 	public class Connector {

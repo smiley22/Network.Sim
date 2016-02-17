@@ -24,13 +24,14 @@ namespace Network.Sim.Core {
 		/// </summary>
 		public abstract void Run();
 
-		/// <summary>
-		/// Initializes a new instance of the Event class using the specified
-		/// timeout value.
-		/// </summary>
-		/// <param name="timeout">The time at which the event expires, in
-		/// nanoseconds.</param>
-		public Event(ulong timeout, object sender = null) {
+	    /// <summary>
+	    /// Initializes a new instance of the Event class using the specified
+	    /// timeout value.
+	    /// </summary>
+	    /// <param name="timeout">The time at which the event expires, in
+	    /// nanoseconds.</param>
+	    /// <param name="sender"></param>
+	    protected Event(ulong timeout, object sender = null) {
 			Time = Simulation.Time + timeout;
 			Sender = sender;
 		}
@@ -43,10 +44,7 @@ namespace Network.Sim.Core {
 		/// <returns>A signed number indicating the relative timeout values of this
 		/// instance and other.</returns>
 		public int CompareTo(Event other) {
-			if (other == null)
-				return 1;
-			return Time.CompareTo(other.Time);
-
+		    return other == null ? 1 : Time.CompareTo(other.Time);
 		}
 	}
 }

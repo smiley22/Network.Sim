@@ -27,7 +27,7 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <summary>
 		/// The hub's I/O ports.
 		/// </summary>
-		List<Connector> ports = new List<Connector>();
+		readonly List<Connector> ports = new List<Connector>();
 
 		/// <summary>
 		/// Initializes a new instance of the Hub class.
@@ -35,8 +35,8 @@ namespace Network.Sim.Lan.Ethernet {
 		/// <param name="numPorts">The number of I/O ports.</param>
 		/// <param name="delay">The inherent propagation delay of the hub.</param>
 		public Hub(int numPorts, ulong delay) {
-			for (int i = 0; i < numPorts; i++) {
-				Connector c = new Connector();
+			for (var i = 0; i < numPorts; i++) {
+				var c = new Connector();
 				c.SignalSense += (sender, e) => {
 					Repeat(c, (other, propDelay) =>
 						Simulation.AddEvent(new SignalSenseEvent(propDelay,
@@ -60,16 +60,16 @@ namespace Network.Sim.Lan.Ethernet {
 		/// received.</param>
 		/// <param name="action">The action to invoke.</param>
 		void Repeat(Connector inport, Action<Connector, ulong> action) {
-			foreach (Connector c in ports) {
+			foreach (var c in ports) {
 				if (!c.IsConnected || c == inport)
 					continue;
-				double pos = c.Cable.Connectors[c];
+				var pos = c.Cable.Connectors[c];
 				foreach (var pair in c.Cable.Connectors) {
 					if (pair.Key == c)
 						continue;
-					double dist = Math.Abs(pos - pair.Value);
-					ulong propDelayNs = (ulong) (1000000000 *
-						(dist / (double) c.Cable.PropagationSpeed));
+					var dist = Math.Abs(pos - pair.Value);
+					var propDelayNs = (ulong) (1000000000 *
+						(dist / c.Cable.PropagationSpeed));
 					action(pair.Key, Delay + propDelayNs);
 				}
 			}
