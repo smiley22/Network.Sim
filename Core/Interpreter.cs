@@ -1,14 +1,14 @@
-﻿using ConsoleApplication36.Network.Ip.Routing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using ConsoleApplication36.Miscellaneous;
-using ConsoleApplication36.Network.Ip.Arp;
-using ConsoleApplication36.Lan.Ethernet;
+using Network.Sim.Miscellaneous;
 using System.Linq;
+using Network.Sim.Lan.Ethernet;
+using Network.Sim.Network.Ip.Arp;
+using Network.Sim.Network.Ip.Routing;
 
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	/// <summary>
 	/// Implements the console interpreter of the simulation.
 	/// </summary>

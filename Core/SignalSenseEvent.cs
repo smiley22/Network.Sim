@@ -1,5 +1,5 @@
 ﻿
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	public class SignalSenseEvent : Event {
 		public Connector Connector {
 			get;

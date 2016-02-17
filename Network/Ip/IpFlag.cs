@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleApplication36.Network.Ip {
+namespace Network.Sim.Network.Ip {
 	/// <summary>
 	/// Represents the Flags field of an IP-packet.
 	/// </summary>

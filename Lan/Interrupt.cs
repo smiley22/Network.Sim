@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication36.Lan {
+namespace Network.Sim.Lan {
 	/// <summary>
 	/// The different kinds of interrupts that can be caused by a Network
 	/// Interface Card.

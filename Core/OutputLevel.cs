@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	[Flags]
 	public enum OutputLevel {
 		Physical		= 0x01,

@@ -1,7 +1,7 @@
-﻿using ConsoleApplication36.Test;
-using System;
+﻿using System;
+using Network.Sim.Core;
 
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	public class Connector {
 		public event EventHandler SignalSense;
 		public event EventHandler<SignalCeaseEventArgs> SignalCease;

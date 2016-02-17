@@ -1,10 +1,9 @@
-﻿using ConsoleApplication36.Core;
-using ConsoleApplication36.Lan.Ethernet;
-using ConsoleApplication36.Link;
-using ConsoleApplication36.Network.Ip;
-using ConsoleApplication36.Test;
+﻿using Network.Sim.Core;
+using Network.Sim.Lan.Ethernet;
+using Network.Sim.Link;
+using Network.Sim.Network.Ip;
 
-namespace ConsoleApplication36.Scenarios {
+namespace Network.Sim.Scenarios {
 	/// <summary>
 	/// Demonstrates the CSMA/CD algorithm of IEEE 802.3.
 	/// </summary>

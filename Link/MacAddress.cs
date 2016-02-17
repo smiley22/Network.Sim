@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace ConsoleApplication36.Link {
+namespace Network.Sim.Link {
 	/// <summary>
 	/// Represents a 48-bit MAC address.
 	/// </summary>

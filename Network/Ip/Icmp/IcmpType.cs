@@ -1,5 +1,5 @@
 ﻿
-namespace ConsoleApplication36.Network.Ip.Icmp {
+namespace Network.Sim.Network.Ip.Icmp {
 	/// <summary>
 	/// Represents possible values for the type field of the ICMP header.
 	/// Only a subset of the possible values are supported.

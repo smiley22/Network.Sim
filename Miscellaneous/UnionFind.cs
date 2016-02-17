@@ -1,5 +1,5 @@
 ﻿
-namespace ConsoleApplication36.Miscellaneous {
+namespace Network.Sim.Miscellaneous {
 	/// <summary>
 	/// Implements a very simple union-find data structure.
 	/// </summary>

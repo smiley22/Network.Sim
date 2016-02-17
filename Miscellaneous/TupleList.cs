@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ConsoleApplication36.Miscellaneous {
+namespace Network.Sim.Miscellaneous {
 	/// <summary>
 	/// A list of 2-tuple elements.
 	/// </summary>

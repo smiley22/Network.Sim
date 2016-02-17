@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ConsoleApplication36.Miscellaneous {
+namespace Network.Sim.Miscellaneous {
 	public static class Hash {
 		/// <summary>
 		/// Calculates the SHA-256 hash value for the specified string.

@@ -1,11 +1,11 @@
-﻿using ConsoleApplication36.Core;
-using ConsoleApplication36.Link;
-using ConsoleApplication36.Miscellaneous;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Network.Sim.Core;
+using Network.Sim.Link;
+using Network.Sim.Miscellaneous;
 
-namespace ConsoleApplication36.Lan.Ethernet {
+namespace Network.Sim.Lan.Ethernet {
 	/// <summary>
 	/// Represents an Ethernet bridge.
 	/// </summary>

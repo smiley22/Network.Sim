@@ -1,8 +1,8 @@
-﻿using ConsoleApplication36.Core;
-using ConsoleApplication36.Link;
-using System;
+﻿using System;
+using Network.Sim.Core;
+using Network.Sim.Link;
 
-namespace ConsoleApplication36.Lan {
+namespace Network.Sim.Lan {
 	/// <summary>
 	/// Represents the abstract base class from which all Network Card Interface
 	/// (NIC) implementations (Ethernet, TokenRing, etc.) must derive.

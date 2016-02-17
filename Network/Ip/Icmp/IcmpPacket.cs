@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using ConsoleApplication36.Miscellaneous;
+using Network.Sim.Miscellaneous;
 
-namespace ConsoleApplication36.Network.Ip.Icmp {
+namespace Network.Sim.Network.Ip.Icmp {
 	/// <summary>
 	/// Represents an ICMP packet.
 	/// </summary>

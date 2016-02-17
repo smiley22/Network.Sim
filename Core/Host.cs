@@ -1,10 +1,10 @@
-﻿using ConsoleApplication36.Lan.Ethernet;
-using ConsoleApplication36.Network.Ip;
-using ConsoleApplication36.Network.Ip.Routing;
+﻿using Network.Sim.Lan.Ethernet;
 using System;
 using System.Collections.Generic;
+using Network.Sim.Network.Ip;
+using Network.Sim.Network.Ip.Routing;
 
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	/// <summary>
 	/// Represents a network host.
 	/// </summary>

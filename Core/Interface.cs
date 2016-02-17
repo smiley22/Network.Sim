@@ -1,9 +1,9 @@
-﻿using ConsoleApplication36.Lan;
-using ConsoleApplication36.Link;
-using ConsoleApplication36.Network.Ip;
-using System;
+﻿using System;
+using Network.Sim.Lan;
+using Network.Sim.Link;
+using Network.Sim.Network.Ip;
 
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	/// <summary>
 	/// Represents an abstract network interface object which acts
 	/// as an interface between the network software stack and the

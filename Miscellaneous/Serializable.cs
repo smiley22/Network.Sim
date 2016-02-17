@@ -1,5 +1,5 @@
 ﻿
-namespace ConsoleApplication36.Miscellaneous {
+namespace Network.Sim.Miscellaneous {
 	/// <summary>
 	/// Represents a class which can be serialized into a sequence of bytes.
 	/// </summary>

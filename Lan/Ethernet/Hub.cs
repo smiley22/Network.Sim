@@ -1,8 +1,8 @@
-﻿using ConsoleApplication36.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Network.Sim.Core;
 
-namespace ConsoleApplication36.Lan.Ethernet {
+namespace Network.Sim.Lan.Ethernet {
 	/// <summary>
 	/// Represents an Ethernet hub.
 	/// </summary>

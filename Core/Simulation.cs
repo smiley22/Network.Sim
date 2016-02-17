@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ConsoleApplication36.Miscellaneous;
 using System.Collections.ObjectModel;
+using Network.Sim.Miscellaneous;
 
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	/// <summary>
 	/// Represents the simulation.
 	/// </summary>

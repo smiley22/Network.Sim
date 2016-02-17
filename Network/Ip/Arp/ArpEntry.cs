@@ -1,8 +1,8 @@
-﻿using ConsoleApplication36.Core;
-using ConsoleApplication36.Link;
-using System;
+﻿using System;
+using Network.Sim.Core;
+using Network.Sim.Link;
 
-namespace ConsoleApplication36.Network.Ip.Arp {
+namespace Network.Sim.Network.Ip.Arp {
 	/// <summary>
 	/// Represents an ARP entry in the ARP cache.
 	/// </summary>

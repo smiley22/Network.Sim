@@ -1,12 +1,12 @@
-﻿using ConsoleApplication36.Lan.Ethernet;
-using ConsoleApplication36.Link;
+﻿using Network.Sim.Lan.Ethernet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Network.Sim.Link;
 
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	public class DataReceivedEventArgs : EventArgs {
 		public byte[] Data {
 			get;

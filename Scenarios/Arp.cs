@@ -1,11 +1,10 @@
-﻿using ConsoleApplication36.Core;
-using ConsoleApplication36.Lan.Ethernet;
-using ConsoleApplication36.Link;
-using ConsoleApplication36.Network.Ip;
-using ConsoleApplication36.Test;
-using System;
+﻿using System;
+using Network.Sim.Core;
+using Network.Sim.Lan.Ethernet;
+using Network.Sim.Link;
+using Network.Sim.Network.Ip;
 
-namespace ConsoleApplication36.Scenarios {
+namespace Network.Sim.Scenarios {
 	/// <summary>
 	/// Demonstrates the workings of the Address Resolution Protocol (ARP).
 	/// </summary>

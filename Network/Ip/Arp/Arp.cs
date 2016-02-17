@@ -1,10 +1,10 @@
-﻿using ConsoleApplication36.Core;
-using ConsoleApplication36.Link;
-using ConsoleApplication36.Miscellaneous;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Network.Sim.Core;
+using Network.Sim.Link;
+using Network.Sim.Miscellaneous;
 
-namespace ConsoleApplication36.Network.Ip.Arp {
+namespace Network.Sim.Network.Ip.Arp {
 	/// <summary>
 	/// Implements the Address Resolution Protocol.
 	/// </summary>

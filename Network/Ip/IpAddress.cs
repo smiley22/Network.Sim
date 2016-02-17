@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace ConsoleApplication36.Network.Ip {
+namespace Network.Sim.Network.Ip {
 	/// <summary>
 	/// Represents an IPv4 address.
 	/// </summary>

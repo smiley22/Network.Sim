@@ -1,5 +1,5 @@
 ﻿
-namespace ConsoleApplication36.Network.Ip {
+namespace Network.Sim.Network.Ip {
 	/// <summary>
 	/// Represents possible values for the Protocol field of the IP header. It
 	/// indicates which higher-level protocol is encapsulated in the data section

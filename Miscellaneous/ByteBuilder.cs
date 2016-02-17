@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace ConsoleApplication36.Miscellaneous {
+namespace Network.Sim.Miscellaneous {
 	/// <summary>
 	/// A utility class modeled after the BCL StringBuilder to simplify
 	/// building binary-data messages.

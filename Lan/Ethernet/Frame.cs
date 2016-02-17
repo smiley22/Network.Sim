@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using ConsoleApplication36.Link;
-using ConsoleApplication36.Miscellaneous;
+using Network.Sim.Link;
+using Network.Sim.Miscellaneous;
 
-namespace ConsoleApplication36.Lan.Ethernet {
+namespace Network.Sim.Lan.Ethernet {
 	/// <summary>
 	/// Represents an Ethernet frame.
 	/// </summary>

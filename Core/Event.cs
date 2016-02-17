@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	/// <summary>
 	/// The abstract base class from which all simulation events must
 	/// derive.

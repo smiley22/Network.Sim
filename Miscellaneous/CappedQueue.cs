@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ConsoleApplication36.Miscellaneous {
+namespace Network.Sim.Miscellaneous {
 	/// <summary>
 	/// Represents a first-in, first-out collection of objects, optionally with
 	/// a maximum threshold.

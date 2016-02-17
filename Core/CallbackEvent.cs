@@ -1,6 +1,6 @@
 ﻿
 using System;
-namespace ConsoleApplication36.Core {
+namespace Network.Sim.Core {
 	/// <summary>
 	/// An event for scheduling the execution of arbitrary callback methods.
 	/// </summary>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using ConsoleApplication36.Miscellaneous;
+using Network.Sim.Miscellaneous;
 
-namespace ConsoleApplication36.Network.Ip {
+namespace Network.Sim.Network.Ip {
 	/// <summary>
 	/// Represents an IPv4 packet.
 	/// </summary>

@@ -1,11 +1,11 @@
-﻿using ConsoleApplication36.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Network.Sim.Core;
 
-namespace ConsoleApplication36.Test {
+namespace Network.Sim.Core {
 	public class C10Base5 : Cable {
 
 		static readonly int maxBitrate = 10000000;

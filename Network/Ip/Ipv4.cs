@@ -1,15 +1,15 @@
-﻿using ConsoleApplication36.Core;
-using ConsoleApplication36.Lan.Ethernet;
-using ConsoleApplication36.Link;
-using ConsoleApplication36.Miscellaneous;
-using ConsoleApplication36.Network.Ip.Arp;
-using ConsoleApplication36.Network.Ip.Icmp;
-using ConsoleApplication36.Network.Ip.Routing;
+﻿using Network.Sim.Lan.Ethernet;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Network.Sim.Core;
+using Network.Sim.Link;
+using Network.Sim.Miscellaneous;
+using Network.Sim.Network.Ip.Arp;
+using Network.Sim.Network.Ip.Icmp;
+using Network.Sim.Network.Ip.Routing;
 
-namespace ConsoleApplication36.Network.Ip {
+namespace Network.Sim.Network.Ip {
 	/// <summary>
 	/// Represents the Network layer of the OSI model (Layer 3).
 	/// </summary>

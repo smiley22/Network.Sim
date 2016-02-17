@@ -1,9 +1,8 @@
-﻿using ConsoleApplication36.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace ConsoleApplication36.Test {
+namespace Network.Sim.Core {
 	/// <summary>
 	/// Represents a wired communication channel over which signals can be
 	/// transmitted.
@@ -79,7 +78,10 @@ namespace ConsoleApplication36.Test {
 			}
 		}
 
-		public IReadOnlyDictionary<Connector, double> Connectors {
+        /// <summary>
+        /// The set of devices attached to the cable.
+        /// </summary>
+        public IReadOnlyDictionary<Connector, double> Connectors {
 			get {
 				return new ReadOnlyDictionary<Connector, double>(connectors);
 			}
@@ -88,15 +90,15 @@ namespace ConsoleApplication36.Test {
 		/// <summary>
 		/// The set of devices attached to the cable.
 		/// </summary>
-		protected IDictionary<Connector, double> connectors =
+		protected readonly IDictionary<Connector, double> connectors =
 			new Dictionary<Connector, double>();
 
-		/// <summary>
-		/// The maximum propagation speed which is the speed of light.
-		/// </summary>
-		static readonly double maxPropSpeed = 299792458;
+	    /// <summary>
+	    /// The maximum propagation speed which is the speed of light.
+	    /// </summary>
+	    const double maxPropSpeed = 299792458;
 
-		/// <summary>
+	    /// <summary>
 		/// Initializes a new instance of the Cable class using the specified properties.
 		/// </summary>
 		/// <param name="length">The length of the cable, in metres.</param>
@@ -117,24 +119,24 @@ namespace ConsoleApplication36.Test {
 		/// illegal value.</exception>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if any argument does
 		/// not fall within its expected range.</exception>
-		public Cable(int length, int bitRate, double velocityFactor, bool fullDuplex = true,
+	    protected Cable(int length, int bitRate, double velocityFactor, bool fullDuplex = true,
 			double bitErrorRate = .0, int minBurstErrorLength = 0, int maxBurstErrorLength = 0) {
 			if (length <= 0)
-				throw new ArgumentException("Length must be greater than 0.", "length");
+				throw new ArgumentException("Length must be greater than 0.", nameof(length));
 			if (bitRate <= 0)
-				throw new ArgumentException("The bitrate must be greater than 0.", "bitRate");
+				throw new ArgumentException("The bitrate must be greater than 0.", nameof(bitRate));
 			if (velocityFactor <= 0.0 || velocityFactor > 1.0)
-				throw new ArgumentOutOfRangeException("velocityFactor", "The velocity factor " +
+				throw new ArgumentOutOfRangeException(nameof(velocityFactor), "The velocity factor " +
 					"must be between 0.0 and 1.0.");
 			if (bitErrorRate < 0.0 || bitErrorRate > 1.0)
-				throw new ArgumentOutOfRangeException("bitErrorRate", "The bit error rate " +
+				throw new ArgumentOutOfRangeException(nameof(bitErrorRate), "The bit error rate " +
 					"must be between 0.0 and 1.0.");
 			if (minBurstErrorLength < 0)
 				throw new ArgumentException("The minimum burst error length must be greater " +
-					"than or equal to 0.", "minBurstErrorLength");
+					"than or equal to 0.", nameof(minBurstErrorLength));
 			if (maxBurstErrorLength < minBurstErrorLength)
 				throw new ArgumentException("The maximum burst error length must be greater " +
-					"than or equal to the minimum burst error length", "maxBurstErrorLength");
+					"than or equal to the minimum burst error length", nameof(maxBurstErrorLength));
 			Length = length;
 			PropagationSpeed = maxPropSpeed * velocityFactor;
 			Bitrate = bitRate;
@@ -144,24 +146,28 @@ namespace ConsoleApplication36.Test {
 			MaxBurstErrorLength = maxBurstErrorLength;
 		}
 
+        /// <summary>
+        /// Simulates the transmission of data from the specified source.
+        /// </summary>
+        /// <param name="source">The connector from which data is being transmitted.</param>
+        /// <param name="data">The data that is being transmitted from the source.</param>
 		public void Transmit(Connector source, byte[] data) {
 			source.ThrowIfNull("source");
 			data.ThrowIfNull("data");
-			double position = connectors[source];
+			var position = connectors[source];
 			// Simulate physical frame corruption.
 			if (HasNoise)
 				data = DistortSignal(data);
 			// Calculate transmission time = Size / Bitrate.
-			ulong transTimeNs = (ulong) (1000000000 *
+			var transTimeNs = (ulong) (1000000000 *
 				((data.Length * 8) / (double) Bitrate));
 			// Calculate events for each device on the cable.
 			foreach (var pair in connectors) {
-				double distance = Math.Abs(position - pair.Value);
+				var distance = Math.Abs(position - pair.Value);
 				// Propagation delay in nanoseconds.
-				ulong propDelayNs = (ulong) (1000000000 *
-					(distance / (double) PropagationSpeed));
-				ulong deliveryTimeNs = propDelayNs + transTimeNs;
-
+				var propDelayNs = (ulong) (1000000000 *
+					(distance / PropagationSpeed));
+				var deliveryTimeNs = propDelayNs + transTimeNs;
 				Simulation.AddEvent(
 					new SignalSenseEvent(propDelayNs, pair.Key, source));
 				Simulation.AddEvent(
@@ -169,21 +175,24 @@ namespace ConsoleApplication36.Test {
 			}
 		}
 
+        /// <summary>
+        /// Simulates the transmission of a Jam signal.
+        /// </summary>
+        /// <param name="source">The source sending the Jam signal.</param>
+        /// <returns>The time it takes to transmit the Jam signal, in nanoseconds.</returns>
 		public ulong Jam(Connector source) {
 			Simulation.RemoveEvents(ev => ev is SignalCeaseEvent &&
 				ev.Sender == source);
-			double position = connectors[source];
+			var position = connectors[source];
 			// Calculate the transmission time.
-			ulong transTimeNs = (ulong) (1000000000 *
-				(48 / (double) Bitrate));
+			var transTimeNs = (ulong) (1000000000 * (48 / (double) Bitrate));
 			// Calculate the propagation delay and delivery time for each
 			// NIC within the collision domain.
 			foreach (var pair in connectors) {
-				double distance = Math.Abs(position - pair.Value);
-				ulong propDelayNs = (ulong) (1000000000 *
-					(distance / (double) PropagationSpeed));
-				ulong deliveryTimeNs = propDelayNs + transTimeNs;
-
+				var distance = Math.Abs(position - pair.Value);
+				var propDelayNs = (ulong) (1000000000 *
+					(distance / PropagationSpeed));
+				var deliveryTimeNs = propDelayNs + transTimeNs;
 				Simulation.AddEvent(
 					new SignalCeaseEvent(deliveryTimeNs, pair.Key, null, source));
 			}
@@ -233,21 +242,20 @@ namespace ConsoleApplication36.Test {
 			data.ThrowIfNull("data");
 			if (!HasNoise)
 				return data;
-			Random random = new Random();
-			byte[] distorted = new byte[data.Length];
+			var random = new Random();
+			var distorted = new byte[data.Length];
 			Array.Copy(data, distorted, data.Length);
 			double expectedBurstLength = 0;
-			for (int i = MinBurstErrorLength; i <= MaxBurstErrorLength; i++)
+			for (var i = MinBurstErrorLength; i <= MaxBurstErrorLength; i++)
 				expectedBurstLength += i;
-			expectedBurstLength = (expectedBurstLength / (double)
-				(MaxBurstErrorLength - MinBurstErrorLength + 1));
-			double p = (expectedBurstLength -
+			expectedBurstLength = (expectedBurstLength / (MaxBurstErrorLength - MinBurstErrorLength + 1));
+			var p = (expectedBurstLength -
 				(BitErrorRate * expectedBurstLength)) / BitErrorRate;
-			for (int i = 0; i < (distorted.Length * 8); i++) {
+			for (var i = 0; i < (distorted.Length * 8); i++) {
 				if (random.NextDouble() < (1 / p)) {
-					int n = random.Next(MinBurstErrorLength, MaxBurstErrorLength + 1);
+					var n = random.Next(MinBurstErrorLength, MaxBurstErrorLength + 1);
 					// Distort the next n bits.
-					for (int c = i; c < (i + n) && c < (distorted.Length * 8); c++) {
+					for (var c = i; c < (i + n) && c < (distorted.Length * 8); c++) {
 						int offset = c / 8, bit = c % 8;
 						distorted[offset] &= (byte) (~(1 << bit));
 						distorted[offset] |= (byte) (random.Next(2) << bit);

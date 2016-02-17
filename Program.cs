@@ -1,12 +1,11 @@
-﻿using ConsoleApplication36.Core;
-using ConsoleApplication36.Lan.Ethernet;
-using ConsoleApplication36.Link;
-using ConsoleApplication36.Network.Ip;
-using ConsoleApplication36.Scenarios;
-using ConsoleApplication36.Test;
+﻿using Network.Sim.Core;
+using Network.Sim.Lan.Ethernet;
+using Network.Sim.Link;
+using Network.Sim.Network.Ip;
 using System;
+using Network.Sim.Scenarios;
 
-namespace ConsoleApplication36 {
+namespace Network.Sim {
 	class Program {
 		static void Main(string[] args) {
 //			CsmaCd.Run();

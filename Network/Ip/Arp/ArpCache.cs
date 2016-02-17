@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ConsoleApplication36.Network.Ip;
+using Network.Sim.Network.Ip;
 
-namespace ConsoleApplication36.Network.Ip.Arp {
+namespace Network.Sim.Network.Ip.Arp {
 	/// <summary>
 	/// Represents a cache for storing and retrieving ARP entries.
 	/// </summary>

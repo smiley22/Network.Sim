@@ -1,11 +1,11 @@
-﻿using ConsoleApplication36.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Network.Sim.Core;
 
-namespace ConsoleApplication36.Network.Ip.Routing {
+namespace Network.Sim.Network.Ip.Routing {
 	public class RoutingTable : List<Route> {
 
 		public RoutingTable()

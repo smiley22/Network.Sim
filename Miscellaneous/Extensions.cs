@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ConsoleApplication36 {
+namespace Network.Sim {
 	/// <summary>
 	/// Adds a couple of useful extensions to reference types.
 	/// </summary>

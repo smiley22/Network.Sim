@@ -1,10 +1,10 @@
-﻿using ConsoleApplication36.Link;
-using ConsoleApplication36.Miscellaneous;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
+using Network.Sim.Link;
+using Network.Sim.Miscellaneous;
 
-namespace ConsoleApplication36.Network.Ip.Arp {
+namespace Network.Sim.Network.Ip.Arp {
 	/// <summary>
 	/// Represents an ARP message which is either a request or response
 	/// message.

@@ -1,5 +1,5 @@
 ﻿
-namespace ConsoleApplication36.Network.Ip {
+namespace Network.Sim.Network.Ip {
 	/// <summary>
 	/// Represents the possible values of the version field of an
 	/// IP packet.
