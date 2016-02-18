@@ -109,19 +109,50 @@ namespace Network.Sim.Core {
 				Init(nic, name, ipAddress, netmask, gateway);
 		}
 
-		public Interface(Nic nic, string name, string cidrIpAddress,
+        /// <summary>
+        /// Initializes a new instance of the Interface class using the specified
+        /// parameters.
+        /// </summary>
+        /// <param name="nic">The network interface card (NIC) this interface
+        /// represents.</param>
+        /// <param name="name">A unique name (such as eth0) for identifing the
+        /// interface.</param>
+        /// <param name="cidrIpAddress">The IPv4 address to associate with this
+        /// interface in CIDR notation.</param>
+        /// <param name="gateway">The IPv4 address of the default gateway to
+        /// configure this interface with.</param>
+        /// <exception cref="ArgumentNullException">Thrown if any of the arguments
+        /// is null.</exception>
+        public Interface(Nic nic, string name, string cidrIpAddress,
 			string gateway = null) {
 			var t = IpAddress.ParseCIDRNotation(cidrIpAddress);
 			Init(nic, name, t.Item1, t.Item2, gateway != null ?
 				new IpAddress(gateway) : null);
 		}
 
-
+        /// <summary>
+        /// Hands down the specified data to the data-link layer implementation of the NIC.
+        /// </summary>
+		/// <param name="destination">The phyical destination address.</param>
+		/// <param name="data">The data to send as the frame's payload.</param>
+		/// <param name="type">The type of the data.</param>
 		public void Output(MacAddress destination, byte[] data, EtherType type =
 			EtherType.IPv4) {
 				Nic.Output(destination, data, type);
 		}
 
+        /// <summary>
+        /// Initializes the interface.
+        /// </summary>
+		/// <param name="nic">The network interface card (NIC) this interface
+		/// represents.</param>
+		/// <param name="name">A unique name (such as eth0) for identifing the
+		/// interface.</param>
+		/// <param name="ipAddress">The IPv4 address to associate with this
+		/// interface.</param>
+		/// <param name="netmask">The subnetmask to assign to this interface.</param>
+		/// <param name="gateway">The IPv4 address of the default gateway to
+		/// configure this interface with.</param>
 		void Init(Nic nic, string name, IpAddress ipAddress, IpAddress netmask,
 			IpAddress gateway) {
 			nic.ThrowIfNull("nic");
@@ -136,6 +167,11 @@ namespace Network.Sim.Core {
 			Nic.Interrupt += OnInterrupt;
 		}
 
+        /// <summary>
+        /// Called when the NIC causes an interrupt.
+        /// </summary>
+        /// <param name="sender">A reference to the object that caused the event.</param>
+        /// <param name="e">The event arguments.</param>
 		void OnInterrupt(object sender, EventArgs e) {
 			// Figure out the reason for the interrupt.
 			switch (Nic.InterruptReason) {
@@ -147,6 +183,5 @@ namespace Network.Sim.Core {
 					break;
 			}
 		}
-
 	}
 }
