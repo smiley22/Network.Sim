@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Serialization;
 using Network.Sim.Miscellaneous;
 
 namespace Network.Sim.Network.Ip.Icmp {
@@ -132,9 +133,9 @@ namespace Network.Sim.Network.Ip.Icmp {
 			packet.ThrowIfNull("packet");
 			// Many ICMP packets include the 20-byte IP header and the first
 			// 8 bytes of an IP packet.
-			byte[] serialized = packet.Serialize();
-			int size = Math.Min(20 + 8, serialized.Length);
-			byte[] data = new byte[size];
+			var serialized = packet.Serialize();
+			var size = Math.Min(20 + 8, serialized.Length);
+			var data = new byte[size];
 			Array.Copy(serialized, data, data.Length);
 			return data;
 		}
@@ -179,16 +180,15 @@ namespace Network.Sim.Network.Ip.Icmp {
 		/// not be deserialized from the specified byte array.</exception>
 		public static IcmpPacket Deserialize(byte[] data) {
 			data.ThrowIfNull("data");
-			using (MemoryStream ms = new MemoryStream(data)) {
-				using (BinaryReader reader = new BinaryReader(ms)) {
-					IcmpType type = (IcmpType) reader.ReadByte();
-					IcmpCode code = (IcmpCode) reader.ReadByte();
-					ushort checksum = reader.ReadUInt16();
-					byte[] icmpData = reader.ReadAllBytes();
-					IcmpPacket packet = new IcmpPacket(type, code, checksum, icmpData);
+			using (var ms = new MemoryStream(data)) {
+				using (var reader = new BinaryReader(ms)) {
+					var type = (IcmpType) reader.ReadByte();
+					var code = (IcmpCode) reader.ReadByte();
+					var checksum = reader.ReadUInt16();
+					var icmpData = reader.ReadAllBytes();
+					var packet = new IcmpPacket(type, code, checksum, icmpData);
 					if(ComputeChecksum(packet, true) != 0)
-						throw new System.Runtime.Serialization.
-							SerializationException("The ICMP header is corrupted.");
+						throw new SerializationException("The ICMP header is corrupted.");
 					return packet;
 				}
 			}
@@ -206,16 +206,16 @@ namespace Network.Sim.Network.Ip.Icmp {
 		public static ushort ComputeChecksum(IcmpPacket packet,
 			bool withChecksumField = false) {
 			packet.ThrowIfNull("packet");
-			byte[] bytes = new ByteBuilder()
+			var bytes = new ByteBuilder()
 				.Append((byte) packet.Type)
 				.Append((byte) packet.Code)
 				.Append(withChecksumField ? packet.Checksum : (ushort) 0)
 				.Append(packet.Data)
 				.ToArray();
-			int sum = 0;
+			var sum = 0;
 			// Treat the header bytes as a sequence of unsigned 16-bit values and
 			// sum them up.
-			for (int n = 0; n < bytes.Length; n += 2)
+			for (var n = 0; n < bytes.Length; n += 2)
 				sum += BitConverter.ToUInt16(bytes, n);
 			// Use carries to compute the 1's complement sum.
 			sum = (sum >> 16) + (sum & 0xFFFF);

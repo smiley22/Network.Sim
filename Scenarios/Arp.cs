@@ -17,6 +17,9 @@ namespace Network.Sim.Scenarios {
 	///  IP packet.
 	/// </remarks>
 	public static class Arp {
+		/// <summary>
+		/// Runs the ARP scenario.
+		/// </summary>
 		public static void Run() {
 			Host H1 = new Host("H1"), H2 = new Host("H2");
 			H1.RegisterInterface(new Interface(new Nic(

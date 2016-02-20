@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
 using Network.Sim.Miscellaneous;
 
@@ -149,9 +150,29 @@ namespace Network.Sim.Network.Ip {
 				TotalLength = (ushort) (20 + Data.Length);
 				Version = IpVersion.Ipv4;
 				Checksum = ComputeChecksum(this);
-		}
+        }
 
-		public IpPacket(IpAddress destination, IpAddress source,
+        /// <summary>
+        /// Initializes a new instance of the IpPacket class using the specified
+        /// values.
+        /// </summary>
+        /// <param name="destination">The IPv4 address of the destination
+        /// host.</param>
+        /// <param name="source">The IPv4 address of the sending host.</param>
+        /// <param name="type">The type of the transport protocol encapsulated in
+        /// the IP packet's data section.</param>
+        /// <param name="fragmentOffset">The fragment offset of the packet.</param>
+        /// <param name="data">The transport data to transfer as part of the IP
+        /// packet.</param>
+        /// <param name="ihl">The Internet Header Length.</param>
+        /// <param name="dscp">The Differentiated Services Code Point.</param>
+        /// <param name="ttl">The time-to-live of the IP packet.</param>
+        /// <param name="identification">The idenfication used for uniquely identifying
+        /// fragments of a fragmented IP packet.</param>
+        /// <param name="flags">The flags set on the IP packet.</param>
+        /// <exception cref="ArgumentNullException">Thrown if any of the arguments
+        /// is null.</exception>
+        public IpPacket(IpAddress destination, IpAddress source,
 			IpProtocol type, byte ihl, byte dscp, byte ttl, ushort identification,
 			IpFlag flags, ushort fragmentOffset, byte[] data) {
 			destination.ThrowIfNull("destination");
@@ -159,10 +180,10 @@ namespace Network.Sim.Network.Ip {
 			data.ThrowIfNull("data");
 			if (ihl > 0x0F)
 				throw new ArgumentException("The Internet Header Length field must " +
-					"be in the range from 0 to 15.", "ihl");
+					"be in the range from 0 to 15.", nameof(ihl));
 			if (fragmentOffset > 0x1FFF)
 				throw new ArgumentException("The Fragment Offset field must be in " +
-					"the range from 0 to 8191.", "fragmentOffset");
+					"the range from 0 to 8191.", nameof(fragmentOffset));
 			Version = IpVersion.Ipv4;
 			Ihl = ihl;
 			Dscp = dscp;
@@ -189,10 +210,10 @@ namespace Network.Sim.Network.Ip {
 			source.ThrowIfNull("source");
 			if (ihl > 0x0F)
 				throw new ArgumentException("The Internet Header Length field must " +
-					"be in the range from 0 to 15.", "ihl");
+					"be in the range from 0 to 15.", nameof(ihl));
 			if (fragmentOffset > 0x1FFF)
 				throw new ArgumentException("The Fragment Offset field must be in " +
-					"the range from 0 to 8191.", "fragmentOffset");
+					"the range from 0 to 8191.", nameof(fragmentOffset));
 			Version = version;
 			Ihl = ihl;
 			Dscp = dscp;
@@ -216,9 +237,9 @@ namespace Network.Sim.Network.Ip {
 		/// IpPacket class.</returns>
 		public byte[] Serialize() {
 			// The version and IHL fields are 4 bit wide each.
-			byte vi = (byte) (((Ihl & 0x0F) << 4) | (((int) Version) & 0x0F));
+			var vi = (byte) (((Ihl & 0x0F) << 4) | (((int) Version) & 0x0F));
 			// The flags field is 3 bits and the fragment offset 13 bits wide.
-			ushort ffo = (ushort) (((FragmentOffset & 0x1FFF) << 3) |
+			var ffo = (ushort) (((FragmentOffset & 0x1FFF) << 3) |
 				((int)Flags & 0x07));
 			return new ByteBuilder()
 				.Append(vi)
@@ -248,29 +269,28 @@ namespace Network.Sim.Network.Ip {
 		/// not be deserialized from the specified byte array.</exception>
 		public static IpPacket Deserialize(byte[] data) {
 			data.ThrowIfNull("data");
-			using (MemoryStream ms = new MemoryStream(data)) {
-				using (BinaryReader reader = new BinaryReader(ms)) {
-					byte vi = reader.ReadByte();
-					IpVersion version = (IpVersion)(vi & 0x0F);
+			using (var ms = new MemoryStream(data)) {
+				using (var reader = new BinaryReader(ms)) {
+					var vi = reader.ReadByte();
+					var version = (IpVersion)(vi & 0x0F);
 					byte ihl = (byte) (vi >> 4), dscp = reader.ReadByte();
 					ushort totalLength = reader.ReadUInt16(),
 						identification = reader.ReadUInt16(), ffo = reader.ReadUInt16();
-					IpFlag flags = (IpFlag) (ffo & 0x07);
-					ushort fragmentOffset = (ushort) (ffo >> 3);
-					byte ttl = reader.ReadByte();
-					IpProtocol type = (IpProtocol) reader.ReadByte();
-					ushort checksum = reader.ReadUInt16();
+					var flags = (IpFlag) (ffo & 0x07);
+					var fragmentOffset = (ushort) (ffo >> 3);
+					var ttl = reader.ReadByte();
+					var type = (IpProtocol) reader.ReadByte();
+					var checksum = reader.ReadUInt16();
 					IpAddress src = new IpAddress(reader.ReadBytes(4)),
 						dst = new IpAddress(reader.ReadBytes(4));
 
-					IpPacket packet = new IpPacket(version, ihl, dscp, totalLength,
+					var packet = new IpPacket(version, ihl, dscp, totalLength,
 						identification, flags, fragmentOffset, ttl, type, checksum,
 						src, dst);
 					// Computing the checksum should yield a value of 0 unless errors are
 					// detected.
 					if (ComputeChecksum(packet, true) != 0)
-						throw new System.Runtime.Serialization.
-							SerializationException("The IPv4 header is corrupted.");
+						throw new SerializationException("The IPv4 header is corrupted.");
 					// If no errors have been detected, read the data section.
 					packet.Data = reader.ReadBytes(totalLength - 20);
 					return packet;
@@ -291,12 +311,12 @@ namespace Network.Sim.Network.Ip {
 			bool withChecksumField = false) {
 			packet.ThrowIfNull("packet");
 			// The version and IHL fields are 4 bit wide each.
-			byte vi = (byte) (((packet.Ihl & 0x0F) << 4) |
+			var vi = (byte) (((packet.Ihl & 0x0F) << 4) |
 				(((int) packet.Version) & 0x0F));
 			// The flags field is 3 bits and the fragment offset 13 bits wide.
-			ushort ffo = (ushort) (((packet.FragmentOffset & 0x1FFF) << 3) |
+			var ffo = (ushort) (((packet.FragmentOffset & 0x1FFF) << 3) |
 				((int) packet.Flags & 0x07));
-			byte[] bytes = new ByteBuilder()
+			var bytes = new ByteBuilder()
 				.Append(vi)
 				.Append(packet.Dscp)
 				.Append(packet.TotalLength)
@@ -308,10 +328,10 @@ namespace Network.Sim.Network.Ip {
 				.Append(packet.Source.Bytes)
 				.Append(packet.Destination.Bytes)
 				.ToArray();
-			int sum = 0;
+			var sum = 0;
 			// Treat the header bytes as a sequence of unsigned 16-bit values and
 			// sum them up.
-			for (int n = 0; n < bytes.Length; n += 2)
+			for (var n = 0; n < bytes.Length; n += 2)
 				sum += BitConverter.ToUInt16(bytes, n);
 			// Use carries to compute the 1's complement sum.
 			sum = (sum >> 16) + (sum & 0xFFFF);

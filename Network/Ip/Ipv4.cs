@@ -1,5 +1,4 @@
-﻿using Network.Sim.Lan.Ethernet;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Network.Sim.Core;
@@ -20,61 +19,62 @@ namespace Network.Sim.Network.Ip {
 		/// interface has its own set, because each interface maintains its
 		/// own ARP table.
 		/// </summary>
-		IDictionary<string, ISet<Tuple<IpAddress, IpPacket>>> packetsWaitingOnArpResolve =
+		readonly IDictionary<string, ISet<Tuple<IpAddress, IpPacket>>> packetsWaitingOnArpResolve =
 			new Dictionary<string, ISet<Tuple<IpAddress, IpPacket>>>();
 
 		/// <summary>
 		/// The FIFO buffers for temporarily buffering to-be-send packets.
 		/// Each Interface has its own output FIFO.
 		/// </summary>
-		IDictionary<string, CappedQueue<Tuple<MacAddress, Serializable>>> outputQueue =
+		readonly IDictionary<string, CappedQueue<Tuple<MacAddress, Serializable>>> outputQueue =
 			new Dictionary<string, CappedQueue<Tuple<MacAddress, Serializable>>>();
 
 		/// <summary>
 		/// The queue of received packets waiting to be processed.
 		/// </summary>
-		CappedQueue<Tuple<IpPacket, Interface>> inputQueue =
+		readonly CappedQueue<Tuple<IpPacket, Interface>> inputQueue =
 			new CappedQueue<Tuple<IpPacket, Interface>>();
 
 		/// <summary>
 		/// An enumerable collection of available interfaces of the host
 		/// running the network stack.
 		/// </summary>
-		IEnumerable<Interface> interfaces;
+		readonly IEnumerable<Interface> interfaces;
 
 		/// <summary>
 		/// The host's routing table.
 		/// </summary>
-		RoutingTable routingTable;
+		readonly RoutingTable routingTable;
 
 		/// <summary>
 		/// The nodal processing delay imposed by the host on which the network
 		/// stack is running, in nanoseconds.
 		/// </summary>
-		ulong nodalProcessingDelay;
+		readonly ulong nodalProcessingDelay;
 
 		/// <summary>
 		/// Stores related fragments until the original fragmented packet can be re-
 		/// assembled and handed up.
 		/// </summary>
-		IDictionary<string, ISet<IpPacket>> fragments =
+		readonly IDictionary<string, ISet<IpPacket>> fragments =
 			new Dictionary<string, ISet<IpPacket>>();
 
 		/// <summary>
 		/// The ARP module instance for resolving IP addresses to MAC addresses.
 		/// </summary>
-		Arp.Arp arp;
+		readonly Arp.Arp arp;
 
-		/// <summary>
-		/// Initializes a new instance of the Network class.
-		/// </summary>
-		/// <param name="interfaces">An enumerable collection of interfaces
-		/// installed on the host.</param>
-		/// <param name="nodalProcessingDelay">The nodal processing delay, in
-		/// nanoseconds.</param>
-		/// <exception cref="ArgumentNullException">Thrown if the interfaces
-		/// parameter is null.</exception>
-		public Ipv4(IEnumerable<Interface> interfaces, RoutingTable routingTable,
+	    /// <summary>
+	    /// Initializes a new instance of the Network class.
+	    /// </summary>
+	    /// <param name="interfaces">An enumerable collection of interfaces
+	    /// installed on the host.</param>
+	    /// <param name="routingTable">The routing table to use.</param>
+	    /// <param name="nodalProcessingDelay">The nodal processing delay, in
+	    /// nanoseconds.</param>
+	    /// <exception cref="ArgumentNullException">Thrown if the interfaces
+	    /// parameter is null.</exception>
+	    public Ipv4(IEnumerable<Interface> interfaces, RoutingTable routingTable,
 			ulong nodalProcessingDelay) {
 				interfaces.ThrowIfNull("interfaces");
 				this.interfaces = interfaces;
@@ -102,16 +102,16 @@ namespace Network.Sim.Network.Ip {
 			destination.ThrowIfNull("destination");
 			data.ThrowIfNull("data");
 			// Construct IP packets of the size of the MTU of the data-link.
-			int maxDataSize = ifc.MaximumTransmissionUnit - 20;
-			int numPackets = (int) Math.Ceiling(data.Length / (double)maxDataSize);
-			bool sameSubnet = (destination & ifc.Netmask) == (ifc.IpAddress & ifc.Netmask);
+			var maxDataSize = ifc.MaximumTransmissionUnit - 20;
+			var numPackets = (int) Math.Ceiling(data.Length / (double)maxDataSize);
+			var sameSubnet = (destination & ifc.Netmask) == (ifc.IpAddress & ifc.Netmask);
 			for (int i = 0, index = 0; i < numPackets; i++) {
-				int numBytes = Math.Min(maxDataSize, data.Length - index);
-				byte[] packetData = new byte[numBytes];
+				var numBytes = Math.Min(maxDataSize, data.Length - index);
+				var packetData = new byte[numBytes];
 				Array.Copy(data, index, packetData, 0, numBytes);
 				index = index + numBytes;
 				// Construct the packet.
-				IpPacket packet = new IpPacket(destination, ifc.IpAddress, type, packetData);
+				var packet = new IpPacket(destination, ifc.IpAddress, type, packetData);
 				// If source and destination are in the same subnet, we can deliver the
 				// packet directly. Otherwise send it to the configured default gateway.
 				Output(ifc, sameSubnet ? destination : ifc.Gateway, packet);
@@ -150,7 +150,7 @@ namespace Network.Sim.Network.Ip {
 			destination.ThrowIfNull("destination");
 			packet.ThrowIfNull("packet");
 			// Translate IP address into MAC-Address.
-			MacAddress macDestination = arp.Lookup(ifc, destination);
+			var macDestination = arp.Lookup(ifc, destination);
 			// IP address is not in our ARP table.
 			if (macDestination == null) {
 				// Put packet on hold until the MAC-48 destination address has
@@ -226,11 +226,11 @@ namespace Network.Sim.Network.Ip {
 		/// it to the link layer.
 		/// </summary>
 		void EmptySendFifo(Interface ifc) {
-			Tuple<MacAddress, Serializable> tuple = OutputQueueOf(ifc).Dequeue();
+			var tuple = OutputQueueOf(ifc).Dequeue();
 			WriteLine(ifc.FullName + " is outputting next " + tuple.Item2.GetType().Name +
 				" packet from its output queue.");
 			// Figure out whether we're sending an IP or an ARP packet.
-			EtherType type = tuple.Item2 is IpPacket ? EtherType.IPv4 : EtherType.ARP;
+			var type = tuple.Item2 is IpPacket ? EtherType.IPv4 : EtherType.ARP;
 			ifc.Output(tuple.Item1, tuple.Item2.Serialize(), type);
 		}
 
@@ -239,9 +239,9 @@ namespace Network.Sim.Network.Ip {
 		/// </summary>
 		void ProcessPackets() {
 			try {
-				Tuple<IpPacket, Interface> tuple = inputQueue.Dequeue();
-				IpPacket packet = tuple.Item1;
-				Interface ifc = tuple.Item2;
+				var tuple = inputQueue.Dequeue();
+				var packet = tuple.Item1;
+				var ifc = tuple.Item2;
 				packet.TimeToLive--;
 				// Drop packet and send "TTL Expired"-ICMP back to packet originator.
 				if (packet.TimeToLive == 0) {
@@ -250,8 +250,7 @@ namespace Network.Sim.Network.Ip {
 					return;
 				}
 				// Incrementally update the checksum.
-				uint sum;
-				sum = (uint) (packet.Checksum + 0x01);
+			    var sum = (uint) (packet.Checksum + 0x01);
 				packet.Checksum = (ushort) (sum + (sum >> 16));
 				if (IsPacketForUs(packet)) {
 					// See if we have all parts and can reassemble the original packet.
@@ -280,7 +279,7 @@ namespace Network.Sim.Network.Ip {
 		/// received.</param>
 		void RoutePacket(IpPacket packet, Interface ifc) {
 			// See if we can find a machting route in our routing table.
-			Route route = FindRoute(packet);
+			var route = FindRoute(packet);
 			// Drop packet and send "Unreachable" ICMP back to packet originator.
 			if (route == null) {
 				SendIcmp(ifc, packet.Source, IcmpPacket.Unreachable(packet));
@@ -294,10 +293,10 @@ namespace Network.Sim.Network.Ip {
 					SendIcmp(ifc, packet.Source, IcmpPacket.FragmentationRequired(packet));
 					return;
 				}
-				IEnumerable<IpPacket> packets = FragmentPacket(packet,
+				var packets = FragmentPacket(packet,
 					route.Interface.MaximumTransmissionUnit);
 				// Forward fragmented packets.
-				foreach (IpPacket p in packets)
+				foreach (var p in packets)
 					Output(route.Interface, route.Gateway != null ? route.Gateway :
 						p.Destination, p);
 			} else {
@@ -316,7 +315,7 @@ namespace Network.Sim.Network.Ip {
 		/// no route was found.</returns>
 		Route FindRoute(IpPacket packet) {
 			Route best = null;
-			foreach (Route r in routingTable) {
+			foreach (var r in routingTable) {
 				if ((r.Destination & r.Netmask) ==
 					(packet.Destination & r.Netmask)) {
 					if (best == null)
@@ -338,25 +337,25 @@ namespace Network.Sim.Network.Ip {
 		/// <returns>An enumerable collection of packet fragments.</returns>
 		public IEnumerable<IpPacket> FragmentPacket(IpPacket packet, int Mtu) {
 			// The maximum size of a segment is the MTU minus the IP header size.
-			int maxSegmentSize = Mtu - 20;
-			int numSegments = (int) Math.Ceiling(packet.Data.Length /
+			var maxSegmentSize = Mtu - 20;
+			var numSegments = (int) Math.Ceiling(packet.Data.Length /
 				(double)maxSegmentSize);
-			List<IpPacket> list = new List<IpPacket>();
+			var list = new List<IpPacket>();
 			ushort ident = (ushort) (Simulation.Time % 0xFFFF), offset = 0;
-			for (int i = 0; i < numSegments; i++) {
+			for (var i = 0; i < numSegments; i++) {
 				// Set MoreFragments flag for all but the last segment.
-				bool mf = i < (numSegments - 1);
-				IpFlag flags = mf ? (packet.Flags | IpFlag.MoreFragments) :
+				var mf = i < (numSegments - 1);
+				var flags = mf ? (packet.Flags | IpFlag.MoreFragments) :
 					packet.Flags;
-				int dataSize = Math.Min(maxSegmentSize,
+				var dataSize = Math.Min(maxSegmentSize,
 					packet.Data.Length - offset * 8);
-				byte[] data = new byte[dataSize];
+				var data = new byte[dataSize];
 				// Add offset of original packet, as the original packet might be
 				// a fragment itself.
-				ushort packetOffset = 
+				var packetOffset = 
 					(ushort) (packet.FragmentOffset + offset);
 				Array.Copy(packet.Data, offset * 8, data, 0, dataSize);
-				IpPacket segment = new IpPacket(packet.Destination, packet.Source,
+				var segment = new IpPacket(packet.Destination, packet.Source,
 					packet.Protocol, packet.Ihl, packet.Dscp, packet.TimeToLive,
 					ident, flags, packetOffset, data);
 				offset = (ushort) (offset + (maxSegmentSize / 8));
@@ -372,7 +371,7 @@ namespace Network.Sim.Network.Ip {
 		/// <returns>True if the IP packet's destination matches one of the
 		/// host's interfaces' addresses; Otherwise false.</returns>
 		bool IsPacketForUs(IpPacket packet) {
-			foreach (Interface ifc in interfaces) {
+			foreach (var ifc in interfaces) {
 				if (ifc.IpAddress == packet.Destination)
 					return true;
 			}
@@ -405,9 +404,9 @@ namespace Network.Sim.Network.Ip {
 		public void ReassemblePacket(IpPacket packet) {
 			// Fragments belong to the same datagram if they have the same source,
 			// destination, protocol, and identifier fields (RFC 791, p. 28).			
-			string hash = Hash.Sha256(packet.Source.ToString() +
-				packet.Destination.ToString() + packet.Protocol.ToString() +
-				packet.Identification.ToString()
+			var hash = Hash.Sha256(packet.Source +
+				packet.Destination.ToString() + packet.Protocol +
+				packet.Identification
 			);
 			// Group related fragments in a set under the same dictionary key.
 			if (!fragments.ContainsKey(hash))
@@ -415,11 +414,11 @@ namespace Network.Sim.Network.Ip {
 			fragments[hash].Add(packet);
 			// Figure out if we already have all fragments so that we can reassemble
 			// the original packet.
-			UnionFind uf = new UnionFind(65536);
-			int originalDataSize = 0;
-			foreach (IpPacket p in fragments[hash]) {
-				int from = p.FragmentOffset * 8;
-				int to = from + p.Data.Length - 1;
+			var uf = new UnionFind(65536);
+			var originalDataSize = 0;
+			foreach (var p in fragments[hash]) {
+				var from = p.FragmentOffset * 8;
+				var to = from + p.Data.Length - 1;
 				uf.Union(from, to);
 				uf.Union(to, to + 1);
 				// Derive original packet size from last fragment.
@@ -433,8 +432,8 @@ namespace Network.Sim.Network.Ip {
 			// not all fragments have arrived yet.
 			if (!uf.Connected(0, originalDataSize))
 				return;
-			byte[] data = new byte[originalDataSize];
-			foreach (IpPacket p in fragments[hash])
+			var data = new byte[originalDataSize];
+			foreach (var p in fragments[hash])
 				Array.Copy(p.Data, 0, data, p.FragmentOffset * 8, p.Data.Length);
 			// Hand up reassembled data to transport layer.
 			HandUp(data, packet.Protocol);
@@ -465,7 +464,7 @@ namespace Network.Sim.Network.Ip {
 		/// </summary>
 		/// <param name="data">The data to hand up.</param>
 		/// <param name="protocol">The protocol of the data.</param>
-		void HandUp(byte[] data, IpProtocol protocol) {
+		static void HandUp(byte[] data, IpProtocol protocol) {
 			// ICMP is a special case since it's not a tranport protocol
 			// but is implemented as part of the network layer.
 			if (protocol == IpProtocol.Icmp)
@@ -534,7 +533,7 @@ namespace Network.Sim.Network.Ip {
 			data.ThrowIfNull("data");
 			WriteLine(ifc.FullName + " has received new IP packet.");
 			try {
-				IpPacket packet = IpPacket.Deserialize(data);
+				var packet = IpPacket.Deserialize(data);
 				// This method is called in "interrupt context" and can execute
 				// on behalf of different NIC's simultaneously. The IP stack
 				// is usually single threaded however, so incoming packets are queued
@@ -567,7 +566,7 @@ namespace Network.Sim.Network.Ip {
 		void OnArpInput(Interface ifc, byte[] data) {
 			// Delegate to ARP module.
 			arp.OnInput(ifc, data);
-			ISet<Tuple<IpAddress, IpPacket>> waitingSet = WaitingPacketsOf(ifc);
+			var waitingSet = WaitingPacketsOf(ifc);
 			// See if we can schedule any queued IP packets.
 			ISet<Tuple<IpAddress, IpPacket>> sendable =
 				new HashSet<Tuple<IpAddress, IpPacket>>();

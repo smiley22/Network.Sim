@@ -18,6 +18,9 @@ namespace Network.Sim.Scenarios {
 	///  algorithm.
 	/// </remarks>
 	public static class CsmaCd {
+        /// <summary>
+        /// Runs the CsmaCd scenario.
+        /// </summary>
 		public static void Run() {
 			Host H1 = new Host("H1"), H2 = new Host("H2");
 			H1.RegisterInterface(new Interface(new Nic(
@@ -31,9 +34,9 @@ namespace Network.Sim.Scenarios {
 				.Pierce(0, H1.Interfaces["eth0"].Nic.Connector)
 				.Pierce(250, H2.Interfaces["eth0"].Nic.Connector);
 
-			IpPacket dummyPacket1 = new IpPacket(new IpAddress("192.168.1.3"),
+			var dummyPacket1 = new IpPacket(new IpAddress("192.168.1.3"),
 				new IpAddress("192.168.1.2"), IpProtocol.Tcp, new byte[] { 1, 2, 3, 4 });
-			IpPacket dummyPacket2 = new IpPacket(new IpAddress("192.168.1.2"),
+			var dummyPacket2 = new IpPacket(new IpAddress("192.168.1.2"),
 				new IpAddress("192.168.1.3"), IpProtocol.Tcp, new byte[] { 1, 2, 3, 4 });
 
 			// Station H1 triggers a transmission at time t = 0ns.

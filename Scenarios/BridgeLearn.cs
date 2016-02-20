@@ -14,17 +14,20 @@ namespace Network.Sim.Scenarios {
 	///  transmits a packet destined for station C.  
 	/// </remarks>
 	public static class BridgeLearn {
+        /// <summary>
+        /// Runs the BridgeLearn scenario.
+        /// </summary>
 		public static void Run() {
-			Bridge bridge = new Bridge(numPorts: 4, delay: 200);
-			Host H1 = new Host("A");
+			var bridge = new Bridge(numPorts: 4, delay: 200);
+			var H1 = new Host("A");
 			H1.RegisterInterface(new Interface(new Nic(
 				new MacAddress("AA:AA:AA:AA:AA:AA")), "eth0", "192.168.1.2/24",
 				"192.168.1.1"));
-			Host H2 = new Host("B");
+			var H2 = new Host("B");
 			H2.RegisterInterface(new Interface(new Nic(
 				new MacAddress("BB:BB:BB:BB:BB:BB")), "eth0", "192.168.1.3/24",
 				"192.168.1.1"));
-			Host H3 = new Host("C");
+			var H3 = new Host("C");
 			H3.RegisterInterface(new Interface(new Nic(
 				new MacAddress("CC:CC:CC:CC:CC:CC")), "eth0", "192.168.1.4/24",
 				"192.168.1.1"));

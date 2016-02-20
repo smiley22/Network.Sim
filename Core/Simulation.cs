@@ -137,13 +137,28 @@ namespace Network.Sim.Core {
 			Console.ForegroundColor = color;
 		}
 
+        /// <summary>
+        /// Gets a dictionary of all objects registeres with the simulation.
+        /// </summary>
 		public static IReadOnlyDictionary<string, object> Objects {
 			get {
 				return new ReadOnlyDictionary<string, object>(objects);
 			}
 		}
+
+        /// <summary>
+        /// A collection of arbitrary objects for internal "book-keeping".
+        /// </summary>
 		static readonly IDictionary<string, object> objects =
 			new Dictionary<string, object>();
+
+        /// <summary>
+        /// Adds the specified object to a dictionary for "book-keeping" under the specified
+        /// key.
+        /// </summary>
+        /// <param name="name">The name or key with which to add the object to the
+        /// dictionary.</param>
+        /// <param name="o">A reference to the object to add to the dictionary.</param>
 		public static void AddObject(string name, object o) {
 			objects[name] = o;
 		}

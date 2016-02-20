@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Network.Sim.Core;
 using Network.Sim.Link;
 using Network.Sim.Miscellaneous;
@@ -12,18 +13,18 @@ namespace Network.Sim.Network.Ip.Arp {
 		/// <summary>
 		/// The ARP caches. Each interface maintains its own ARP cache. 
 		/// </summary>
-		IDictionary<string, ArpCache> cache = new Dictionary<string, ArpCache>();
+		readonly IDictionary<string, ArpCache> cache = new Dictionary<string, ArpCache>();
 
 		/// <summary>
 		/// A set of IPv4 addresses for which ARP requests are currently in
 		/// progress.
 		/// </summary>
-		ISet<IpAddress> arpInProgress = new HashSet<IpAddress>();
+		readonly ISet<IpAddress> arpInProgress = new HashSet<IpAddress>();
 
 		/// <summary>
 		/// The delegate for invoking a transmission of the network layer.
 		/// </summary>
-		Output output;
+		readonly Output output;
 
 		/// <summary>
 		/// The layer-2 physical address used for broadcasting to all stations
@@ -71,17 +72,18 @@ namespace Network.Sim.Network.Ip.Arp {
 			return null;
 		}
 
-		/// <summary>
-		/// Resolves the specified IPv4 address to a Layer-2 (MAC-48)
-		/// physical address.
-		/// </summary>
-		/// <param name="ipAddress">The IPv4 address to resolve.</param>
-		/// <exception cref="ArgumentNullException">Thrown if either of the
-		/// arguments is null.</exception>
-		/// <remarks>This API is exposed to the next higher-up layer. In other
-		/// words, it is called by the Network layer to resolve an IPv4 address
-		/// to the corresponding MAC-48 address.</remarks>
-		public void Resolve(Interface ifc, IpAddress ipAddress) {
+        /// <summary>
+        /// Resolves the specified IPv4 address to a Layer-2 (MAC-48)
+        /// physical address.
+        /// </summary>
+        /// <param name="ifc">The interface to look an address up for.</param>
+        /// <param name="ipAddress">The IPv4 address to resolve.</param>
+        /// <exception cref="ArgumentNullException">Thrown if either of the
+        /// arguments is null.</exception>
+        /// <remarks>This API is exposed to the next higher-up layer. In other
+        /// words, it is called by the Network layer to resolve an IPv4 address
+        /// to the corresponding MAC-48 address.</remarks>
+        public void Resolve(Interface ifc, IpAddress ipAddress) {
 			ifc.ThrowIfNull("ifc");
 			ipAddress.ThrowIfNull("ipAddress");
 			// If there's already a pending ARP request for the IP, don't
@@ -113,7 +115,7 @@ namespace Network.Sim.Network.Ip.Arp {
 			ifc.ThrowIfNull("ifc");
 			data.ThrowIfNull("data");
 			WriteLine(ifc.FullName + " has received an ARP message.");
-			ArpPacket packet = ArpPacket.Deserialize(data);
+			var packet = ArpPacket.Deserialize(data);
 			// If it's our own packet, don't do anything with it.
 			if (packet.MacAddressSender == ifc.Nic.MacAddress)
 				return;
@@ -131,7 +133,7 @@ namespace Network.Sim.Network.Ip.Arp {
 				// It's an ARP request and we are the recipient, so send an ARP reply
 				// back to the sender.
 				if (packet.IpAddressTarget == ifc.IpAddress) {
-					ArpPacket response = new ArpPacket(ifc.Nic.MacAddress,
+					var response = new ArpPacket(ifc.Nic.MacAddress,
 						packet.IpAddressTarget, packet.MacAddressSender,
 						packet.IpAddressSender);
 					WriteLine(ifc.FullName + " is constructing an ARP response for " +
