@@ -1,4 +1,5 @@
-﻿using Network.Sim.Core;
+﻿using System;
+using Network.Sim.Core;
 using Network.Sim.Lan.Ethernet;
 using Network.Sim.Link;
 using Network.Sim.Network.Ip;
@@ -7,21 +8,39 @@ namespace Network.Sim.Scenarios {
 	/// <summary>
 	/// Demonstrates the CSMA/CD algorithm of IEEE 802.3.
 	/// </summary>
-	/// <remarks>
-	/// Setting:
-	///  2 stations attached to a 10Mbps link at a distance of 250 metres
-	///  both start transmitting within a time difference of just 1000
-	///  nanoseconds. Assuming a wave propagation speed of 0.66 times the
-	///  speed of light, the carrier signal of the first transmission will
-	///  not have reached the second station before it starts transmitting,
-	///  resulting in a collision, which is then resolved with the CSMA/CD
-	///  algorithm.
-	/// </remarks>
-	public static class CsmaCd {
+	public class CsmaCd : Scenario {
         /// <summary>
-        /// Runs the CsmaCd scenario.
+        /// The friendly name of the scenario.
         /// </summary>
-		public static void Run() {
+	    public override string Name {
+	        get {
+	            return "Carrier sense multiple access with collision detection (CSMA/CD)";
+	        }
+	    }
+
+        /// <summary>
+        /// A description of the scenario.
+        /// </summary>
+	    public override string Description {
+	        get {
+	            return string.Join(Environment.NewLine,
+                    "Demonstrates the CSMA/CD algorithm of IEEE 802.3.",
+                    "",
+                    "2 stations attached to a 10Mbps link at a distance of 250 metres",
+                    "both start transmitting within a time difference of just 1000",
+                    "nanoseconds. Assuming a wave propagation speed of 0.66 times the",
+                    "speed of light, the carrier signal of the first transmission will",
+                    "not have reached the second station before it starts transmitting,",
+                    "resulting in a collision, which is then resolved with the CSMA/CD",
+                    "algorithm."
+                );
+	        }
+	    }
+
+	    /// <summary>
+        /// Runs the scenario.
+        /// </summary>
+		public override void Run() {
 			Host H1 = new Host("H1"), H2 = new Host("H2");
 			H1.RegisterInterface(new Interface(new Nic(
 				new MacAddress("AA:AA:AA:AA:AA:AA")), "eth0", "192.168.1.2/24",

@@ -1,4 +1,5 @@
-﻿using Network.Sim.Core;
+﻿using System;
+using Network.Sim.Core;
 using Network.Sim.Lan.Ethernet;
 using Network.Sim.Link;
 using Network.Sim.Network.Ip;
@@ -13,11 +14,35 @@ namespace Network.Sim.Scenarios {
 	///  port 0, station B on port 1 and station C on port 2. Station A
 	///  transmits a packet destined for station C.  
 	/// </remarks>
-	public static class BridgeLearn {
+	public class BridgeLearn : Scenario {
+        /// <summary>
+        /// The friendly name of the scenario.
+        /// </summary>
+	    public override string Name {
+            get {
+                return "Learning Bridge Algorithm";
+            }
+        }
+
+        /// <summary>
+        /// A description of the scenario.
+        /// </summary>
+	    public override string Description {
+            get {
+                return string.Join(Environment.NewLine,
+                    "Demonstrates the learning algorithm of an Ethernet bridge.",
+                    "",
+                    "3 stations are attached to an Ethernet bridge with station A on",
+                    "port 0, station B on port 1 and station C on port 2. Station A",
+                    "transmits a packet destined for station C."
+                );
+            }
+        }
+
         /// <summary>
         /// Runs the BridgeLearn scenario.
         /// </summary>
-		public static void Run() {
+		public override void Run() {
 			var bridge = new Bridge(numPorts: 4, delay: 200);
 			var H1 = new Host("A");
 			H1.RegisterInterface(new Interface(new Nic(

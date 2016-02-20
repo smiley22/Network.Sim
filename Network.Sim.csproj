@@ -94,6 +94,7 @@
     <Compile Include="Scenarios\Arp.cs" />
     <Compile Include="Scenarios\BridgeLearn.cs" />
     <Compile Include="Scenarios\CsmaCd.cs" />
+    <Compile Include="Scenarios\Scenario.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
