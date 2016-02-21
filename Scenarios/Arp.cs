@@ -8,14 +8,6 @@ namespace Network.Sim.Scenarios {
     /// <summary>
     /// Demonstrates layer-3 address resolution through the Address Resolution Protocol (ARP).
     /// </summary>
-    /// <remarks>
-    /// Setting:
-    ///  2 stations are attached to a 10Mbps (10BASE5) link. Station A 
-    ///  sends an IP packet to station B which results in a transmission
-    ///  of multiple ARP messages to resolve Station B's IP address to a
-    ///  Layer-2 MAC-48 address prior to the sending of the actual
-    ///  IP packet.
-    /// </remarks>
     public class Arp : Scenario {
         /// <summary>
         /// The friendly name of the scenario.

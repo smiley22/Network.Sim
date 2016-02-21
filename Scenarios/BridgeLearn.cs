@@ -8,12 +8,6 @@ namespace Network.Sim.Scenarios {
 	/// <summary>
 	/// Demonstrates the learning algorithm of an Ethernet bridge.
 	/// </summary>
-	/// <remarks>
-	/// Setting:
-	///  3 stations are attached to an Ethernet bridge with station A on
-	///  port 0, station B on port 1 and station C on port 2. Station A
-	///  transmits a packet destined for station C.  
-	/// </remarks>
 	public class BridgeLearn : Scenario {
         /// <summary>
         /// The friendly name of the scenario.

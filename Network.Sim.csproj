@@ -91,10 +91,16 @@
     <Compile Include="Core\SignalCeaseEventArgs.cs" />
     <Compile Include="Core\SignalSenseEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scenarios\Arp.cs" />
-    <Compile Include="Scenarios\BridgeLearn.cs" />
-    <Compile Include="Scenarios\CsmaCd.cs" />
-    <Compile Include="Scenarios\Scenario.cs" />
+    <None Include="Scenarios\Arp.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\BridgeLearn.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\CsmaCd.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Core\Scenario.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

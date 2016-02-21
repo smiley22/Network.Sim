@@ -1,4 +1,4 @@
-﻿namespace Network.Sim.Scenarios {
+﻿namespace Network.Sim.Core {
     /// <summary>
     /// Represents a simulation scenario.
     /// </summary>
