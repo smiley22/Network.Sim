@@ -1,7 +1,7 @@
 ﻿
 namespace Network.Sim.Core {
     /// <summary>
-    /// The simulation event that is raised when a signal is no longer sensed by an Ethernet transceiver.
+    /// The simulation event that is raised when a signal is no longer sensed by a transceiver.
     /// </summary>
     public class SignalCeaseEvent : Event {
         /// <summary>
