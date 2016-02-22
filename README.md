@@ -22,8 +22,12 @@ tables, etc. Type 'help' for a list of all available commands.
 
 Source code documentation can be found [here](http://smiley22.github.io/Network.Sim/Documentation/).
 
-![Network.Sim Window](/Network.Sim.1.png?raw=true)
-![Network.Sim Window](/Network.Sim.2.png?raw=true)
+<p align="center">
+ <img src="/Network.Sim.1.png?raw=true" />
+</p>
+<p align="center">
+ <img src="/Network.Sim.2.png?raw=true" />
+</p>
 
 ### Credits
 
